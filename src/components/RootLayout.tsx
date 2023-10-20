@@ -63,8 +63,6 @@ export const RootLayout = () => {
   const disableLayout =
     pathname !== "/" && isCurrentRouteEnabled && !isCurrentRouteInMenus;
 
-  console.log(pathname, disableLayout);
-
   useEffect(() => {
     if (disabledKeys.includes(pathname)) {
       window.location.replace(import.meta.env.VITE_WEB_BASE);
