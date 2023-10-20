@@ -6,7 +6,7 @@ import "dayjs/locale/zh-tw";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import NotFound from "./pages/[...all]";
+import NotFound from "./pages/404";
 import "./styles/main.css";
 import { theme } from "./styles/theme";
 
