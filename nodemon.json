@@ -1,0 +1,7 @@
+{
+  "delay": 1,
+  "quiet": true,
+  "verbose": true,
+  "watch": "src/server",
+  "ignore": "src/router.ts"
+}
