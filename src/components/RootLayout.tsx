@@ -28,15 +28,14 @@ export const RootLayout = () => {
   return (
     <Layout>
       <Header className="sticky top-0 z-10 w-full flex justify-start items-stretch">
-        <button
+        <a
           className="flex justify-center items-center gap-3"
-          onClick={() => {
-            to("/");
-          }}
+          href={import.meta.env.VITE_WEB_BASE}
+          rel="noopener"
         >
           <img src={logo} alt="logo" />
           <h1 className="font-bold text-lg">{import.meta.env.VITE_TITLE}</h1>
-        </button>
+        </a>
       </Header>
       <Layout>
         <Sider

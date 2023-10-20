@@ -1,14 +1,14 @@
 import { StyleProvider } from "@ant-design/cssinjs";
-import { routes } from "@generouted/react-router/lazy";
+import { routes } from "@generouted/react-router";
 import { App, ConfigProvider } from "antd";
 import zhTW from "antd/es/locale/zh_TW";
 import "dayjs/locale/zh-tw";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import "../styles/main.css";
-import { theme } from "../styles/theme";
-import NotFound from "./[...all]";
+import NotFound from "./pages/[...all]";
+import "./styles/main.css";
+import { theme } from "./styles/theme";
 
 const container = document.getElementById(
   import.meta.env.VITE_REACT_ROOT_ID,

@@ -1,7 +1,6 @@
 import compression from "compression";
 import express from "express";
 import helmet from "helmet";
-import { createLogger } from "vite";
 import ViteExpress from "vite-express";
 import apiRouter from "./api";
 
@@ -24,8 +23,5 @@ if (IS_PRODCTION) {
 app.use(API_PREFIX, apiRouter);
 
 ViteExpress.listen(app, PORT, () => {
-  const logger = createLogger(undefined, { prefix: "[SERVER]" });
-  logger.info(`Server ready, ${HOST_URL}`, {
-    timestamp: false,
-  });
+  console.info(`Server ready, ${HOST_URL}`);
 });

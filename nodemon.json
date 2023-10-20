@@ -3,5 +3,8 @@
   "quiet": true,
   "verbose": true,
   "watch": "src/server",
-  "ignore": "src/router.ts"
+  "ignore": "src/router.ts",
+  "execMap": {
+    "ts": "tsx"
+  }
 }
