@@ -1,5 +1,5 @@
 import { BookOutlined, CameraOutlined } from "@ant-design/icons";
-import { Layout, Menu, MenuProps } from "antd";
+import { Layout, Menu, MenuProps, theme } from "antd";
 import { Outlet, useLocation } from "react-router-dom";
 import { Path, useNavigate } from "../router";
 import { MENU_WIDTH, NAV_HEIGHT } from "../styles/theme";
@@ -23,6 +23,7 @@ const menuItems: MenuProps["items"] = [
 ];
 
 export const RootLayout = () => {
+  const { token } = theme.useToken();
   const { pathname } = useLocation();
   const to = useNavigate();
   return (
@@ -30,6 +31,7 @@ export const RootLayout = () => {
       <Header className="sticky top-0 z-10 w-full flex justify-start items-stretch">
         <a
           className="flex justify-center items-center gap-3"
+          style={{ color: token.colorText }}
           href={import.meta.env.VITE_WEB_BASE}
           rel="noopener"
         >
