@@ -7,9 +7,7 @@ import {
   Tag,
   version,
 } from "antd";
-import { getPath } from "../../utils/util";
-
-const logo = getPath(import.meta.env.VITE_FAVICON);
+import { SITE_LOGO } from "../../constants/assets";
 
 export default function Index() {
   const { message } = App.useApp();
@@ -18,7 +16,7 @@ export default function Index() {
     <div className="flex h-screen flex-col items-center justify-center gap-3 text-center">
       <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
         <img
-          src={logo}
+          src={SITE_LOGO}
           className="pointer-events-none h-[20vmin]"
           alt={import.meta.env.VITE_TITLE}
         />

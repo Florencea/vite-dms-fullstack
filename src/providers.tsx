@@ -9,7 +9,6 @@ import {
   RouterProvider,
   createBrowserRouter,
 } from "react-router-dom";
-// import NotFound from "./pages/404";
 import "./styles/main.css";
 import { theme } from "./styles/theme";
 

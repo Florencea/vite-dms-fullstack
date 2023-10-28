@@ -4,13 +4,11 @@ import { MenuItemType } from "antd/es/menu/hooks/useItems";
 import { ReactNode, useEffect } from "react";
 import { Title } from "react-head";
 import { Outlet, useLocation } from "react-router-dom";
+import { SITE_LOGO } from "../constants/assets";
 import { Path, useNavigate } from "../router";
 import { MENU_WIDTH, NAV_HEIGHT } from "../styles/theme";
-import { getPath } from "../utils/util";
 
 const { Header, Content, Sider } = Layout;
-
-const logo = getPath(import.meta.env.VITE_FAVICON);
 
 /**
  * 約定：具有 itemIcon: "" 才是目錄列表 item，disabled 控制是否在側欄顯示
@@ -86,7 +84,7 @@ export const RootLayout = () => {
                 href={import.meta.env.VITE_WEB_BASE}
                 rel="noopener"
               >
-                <img src={logo} alt="logo" />
+                <img src={SITE_LOGO} alt="logo" />
                 <h1 className="font-bold text-lg">
                   {import.meta.env.VITE_TITLE}
                 </h1>
