@@ -2,10 +2,9 @@
   "private": true,
   "scripts": {
     "dev": "dotenv nodemon src/server/app.ts",
-    "start": "NODE_ENV=production dotenv tsx src/server/app.ts",
-    "build": "dotenv vite build",
-    "lint": "dotenv eslint --ext ts,tsx . && tsc",
-    "format": "dotenv prettier '**/*' --write --ignore-unknown --cache"
+    "start": "dotenv vite build && NODE_ENV=production dotenv tsx src/server/app.ts",
+    "lint": "eslint --ext ts,tsx . && tsc",
+    "format": "prettier '**/*' --write --ignore-unknown --cache"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.17.2",
