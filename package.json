@@ -11,7 +11,7 @@
     "@ant-design/icons": "^5.2.6",
     "@generouted/react-router": "^1.16.1",
     "@vitejs/plugin-react": "^4.1.1",
-    "antd": "^5.10.3",
+    "antd": "^5.11.0",
     "autoprefixer": "^10.4.16",
     "compression": "^1.7.4",
     "dayjs": "^1.11.10",
