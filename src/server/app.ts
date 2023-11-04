@@ -23,12 +23,12 @@ app.disable("x-powered-by");
 app.use(helmet());
 app.use(compression());
 
+app.use("/docs", serve);
+app.use("/docs", setup(openApiDocument));
+
 app.use(API_PREFIX, ...publicControllers);
 app.use(jwtHandler);
 app.use(API_PREFIX, ...protectedControllers);
-
-app.use("/docs", serve);
-app.use("/docs", setup(openApiDocument));
 
 app.use(errorHandler);
 

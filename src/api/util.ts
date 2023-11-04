@@ -19,7 +19,7 @@ export const makeZSuccessResponse = <T extends Record<string, z.ZodTypeAny>>(
   return z
     .object({
       message: z.string().default("ok"),
-      timastamp: z.string().datetime().default(dayjs().toISOString()),
+      timestamp: z.string().datetime().default(dayjs().toISOString()),
       data,
     })
     .required();
@@ -33,7 +33,7 @@ export const makeResponse = <T extends Record<string, z.ZodTypeAny>>(
   const { data } = params;
   return {
     message: "ok",
-    timastamp: dayjs().toISOString(),
+    timestamp: dayjs().toISOString(),
     data,
   } satisfies ResponseT;
 };
@@ -43,7 +43,7 @@ export const makeZErrorResponse = (params: ZErrorResponseParamsT) => {
   const zError = z
     .object({
       message: z.string().default(message),
-      timastamp: z.string().datetime().default(dayjs().toISOString()),
+      timestamp: z.string().datetime().default(dayjs().toISOString()),
       data: z.object({}).default({}),
     })
     .required();
@@ -58,7 +58,7 @@ export const throwError = (params: ZErrorResponseParamsT) => {
     statusCode,
     {
       message,
-      timastamp: dayjs().toISOString(),
+      timestamp: dayjs().toISOString(),
       data: {},
     },
   ] satisfies ErrorT;
@@ -76,7 +76,7 @@ export const makeError = (err: unknown) => {
     statusCode,
     body: {
       message,
-      timastamp: get<string>(err, "[1].timastamp", dayjs().toISOString()),
+      timestamp: get<string>(err, "[1].timestamp", dayjs().toISOString()),
       data: {},
     },
   };
