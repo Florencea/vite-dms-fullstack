@@ -4,21 +4,27 @@ import { makeZErrorResponse, makeZSuccessResponse } from "../util";
 
 const parameters = makeParameters([
   {
-    name: "",
-    type: "Body",
-    schema: z
-      .object({
-        account: z.string(),
-        password: z.string(),
-      })
-      .required(),
+    name: "current",
+    type: "Query",
+    schema: z.number().int().default(1),
+  },
+  {
+    name: "pageSize",
+    type: "Query",
+    schema: z.number().int().default(10),
   },
 ]);
 
 const response = makeZSuccessResponse({
   data: z
     .object({
-      token: z.string().default("token"),
+      list: z
+        .object({
+          id: z.string(),
+          name: z.string(),
+        })
+        .array(),
+      total: z.number(),
     })
     .required(),
 });
@@ -50,13 +56,13 @@ const errors = makeErrors([
   },
 ]);
 
-const login = makeEndpoint({
-  method: "post",
-  path: "/system/auth",
-  description: "Login to system",
+const getList = makeEndpoint({
+  method: "get",
+  path: "/user/list",
+  description: "Get user list",
   parameters,
   response,
   errors,
 });
 
-export default login;
+export default getList;

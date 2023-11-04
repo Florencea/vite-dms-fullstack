@@ -8,8 +8,8 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  publicId  String    @unique @default(uuid())
+  pid       Int       @id @default(autoincrement())
+  id        String    @unique @default(uuid())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
@@ -25,21 +25,21 @@ model User {
 }
 
 model Post {
-  id        Int       @id @default(autoincrement())
-  publicId  String    @unique @default(uuid())
+  pid       Int       @id @default(autoincrement())
+  id        String    @unique @default(uuid())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   title     String
   body      String?
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [pid])
   userId    Int
   comments  Comment[]
 }
 
 model Comment {
-  id        Int       @id @default(autoincrement())
-  publicId  String    @unique @default(uuid())
+  pid       Int       @id @default(autoincrement())
+  id        String    @unique @default(uuid())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
@@ -47,40 +47,40 @@ model Comment {
   email     String
   body      String?
   postId    Int
-  post      Post      @relation(fields: [postId], references: [id])
+  post      Post      @relation(fields: [postId], references: [pid])
 }
 
 model Album {
-  id        Int       @id @default(autoincrement())
-  publicId  String    @unique @default(uuid())
+  pid       Int       @id @default(autoincrement())
+  id        String    @unique @default(uuid())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   title     String
   userId    Int
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [pid])
   photos    Photo[]
 }
 
 model Photo {
-  id        Int       @id @default(autoincrement())
-  publicId  String    @unique @default(uuid())
+  pid       Int       @id @default(autoincrement())
+  id        String    @unique @default(uuid())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   url       String
   albumId   Int
-  albums    Album     @relation(fields: [albumId], references: [id])
+  albums    Album     @relation(fields: [albumId], references: [pid])
 }
 
 model Todo {
-  id        Int       @id @default(autoincrement())
-  publicId  String    @unique @default(uuid())
+  pid       Int       @id @default(autoincrement())
+  id        String    @unique @default(uuid())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   title     String
   completed Boolean
   userId    Int
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [pid])
 }

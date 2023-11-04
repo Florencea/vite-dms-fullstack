@@ -1,5 +1,6 @@
 import { bearerAuthScheme, openApiBuilder } from "@zodios/openapi";
-import systemApi from "../../api/system";
+import authApi from "../../api/auth";
+import userApi from "../../api/user";
 
 const openApiDocument = openApiBuilder({
   title: `OpenAPI for ${process.env.VITE_TITLE ?? "system"}`,
@@ -8,14 +9,15 @@ const openApiDocument = openApiBuilder({
 })
   .addServer({ url: "/api" })
   .addSecurityScheme("jwt", bearerAuthScheme())
-  .addPublicApi(systemApi)
-  // .addProtectedApi("admin", adminApi)
   .setCustomTagsFn((path) => {
     const tagMap: Record<string, string[]> = {
-      "/system/auth": ["system"],
+      "/auth": ["auth"],
+      "/user/list": ["user"],
     };
-    return tagMap?.[path] ?? ["Uncatogorized"];
+    return tagMap[path];
   })
+  .addPublicApi(authApi)
+  .addProtectedApi("jwt", userApi)
   .build();
 
 export default openApiDocument;

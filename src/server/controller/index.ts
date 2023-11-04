@@ -1,5 +1,5 @@
-import systemRouter from "./system";
+import authController from "./auth";
+import userController from "./user";
 
-const apiControllers = [systemRouter];
-
-export default apiControllers;
+export const publicControllers = [authController];
+export const protectedControllers = [userController];

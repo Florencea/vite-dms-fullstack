@@ -4,7 +4,8 @@ import { Express } from "express";
 import helmet from "helmet";
 import { serve, setup } from "swagger-ui-express";
 import ViteExpress from "vite-express";
-import apiControllers from "./controller";
+import { protectedControllers, publicControllers } from "./controller";
+import errorHandler from "./controller/error";
 import openApiDocument from "./openapi";
 
 const IS_PRODCTION = process.env.NODE_ENV === "production";
@@ -17,16 +18,17 @@ const HOST_URL = IS_PRODCTION
 
 const app = zodiosApp();
 
-if (IS_PRODCTION) {
-  app.disable("x-powered-by");
-  app.use(helmet());
-  app.use(compression());
-}
+app.disable("x-powered-by");
+app.use(helmet());
+app.use(compression());
 
-app.use(API_PREFIX, ...apiControllers);
+app.use(API_PREFIX, ...publicControllers);
+app.use(API_PREFIX, ...protectedControllers);
 
 app.use("/docs", serve);
 app.use("/docs", setup(openApiDocument));
+
+app.use(errorHandler);
 
 ViteExpress.listen(app as Express, PORT, () => {
   console.info(`Server ready, ${HOST_URL}`);
