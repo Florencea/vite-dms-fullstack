@@ -6,6 +6,7 @@ import { serve, setup } from "swagger-ui-express";
 import ViteExpress from "vite-express";
 import { protectedControllers, publicControllers } from "./controller";
 import errorHandler from "./controller/error";
+import jwtHandler from "./controller/jwt";
 import openApiDocument from "./openapi";
 
 const IS_PRODCTION = process.env.NODE_ENV === "production";
@@ -23,6 +24,7 @@ app.use(helmet());
 app.use(compression());
 
 app.use(API_PREFIX, ...publicControllers);
+app.use(jwtHandler);
 app.use(API_PREFIX, ...protectedControllers);
 
 app.use("/docs", serve);

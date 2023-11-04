@@ -11,7 +11,7 @@ userController.get("/user/list", async (req, res) => {
   try {
     const data = await UserService.getList(req.query);
     res.status(200).json({
-      message: "ok",
+      message: `ok, by ${req.headers.authorization}`,
       data,
     });
   } catch (err) {

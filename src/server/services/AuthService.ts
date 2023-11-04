@@ -1,5 +1,6 @@
 import { User } from "@prisma/client";
 import argon2 from "argon2";
+import express from "express";
 import * as jose from "jose";
 import prisma from "../../../prisma";
 import { throwError } from "../../api/util";
@@ -33,6 +34,26 @@ export class AuthService {
     }
   }
 
+  public static async verify(req: express.Request) {
+    const authorization = req.headers.authorization;
+    if (!authorization) {
+      throwError({ statusCode: 401, message: "No token provided" });
+    } else {
+      const token = authorization.replace("Bearer ", "");
+      const id = await this.verifyJwt(token);
+      if (!id) {
+        throwError({ statusCode: 401, message: "Invalid token" });
+      } else {
+        const user = await prisma.user.findUnique({ where: { id } });
+        if (!user) {
+          throwError({ statusCode: 401, message: "User not found" });
+        } else {
+          return user.id;
+        }
+      }
+    }
+  }
+
   private static async createJwt(user: User) {
     const { issuer, audience, secretOrKey, maxAge } = this.jwtSettings;
     const now = Date.now();
@@ -51,5 +72,16 @@ export class AuthService {
       .sign(secret);
 
     return jwt;
+  }
+
+  private static async verifyJwt(token: string) {
+    try {
+      const { secretOrKey } = this.jwtSettings;
+      const secret = new TextEncoder().encode(secretOrKey);
+      const { payload } = await jose.jwtVerify(token, secret);
+      return payload.sub;
+    } catch {
+      return undefined;
+    }
   }
 }
