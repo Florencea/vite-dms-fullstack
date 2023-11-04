@@ -1,6 +1,6 @@
 import { makeEndpoint, makeErrors, makeParameters } from "@zodios/core";
 import { z } from "zod";
-import { makeZErrorResponse, makeZSuccessResponse } from "../util";
+import { makeZSuccessResponse, zError } from "../util";
 
 const parameters = makeParameters([
   {
@@ -22,6 +22,8 @@ const response = makeZSuccessResponse({
         .object({
           id: z.string(),
           name: z.string(),
+          createdAt: z.date(),
+          updatedAt: z.date(),
         })
         .array(),
       total: z.number(),
@@ -33,26 +35,17 @@ const errors = makeErrors([
   {
     status: 400,
     description: "Bad Request",
-    schema: makeZErrorResponse({
-      statusCode: 400,
-      message: "Error Message",
-    }),
+    schema: zError,
   },
   {
     status: 401,
     description: "Unauthorized",
-    schema: makeZErrorResponse({
-      statusCode: 401,
-      message: "Error Message",
-    }),
+    schema: zError,
   },
   {
     status: "default",
     description: "Server Error",
-    schema: makeZErrorResponse({
-      statusCode: 500,
-      message: "Error Message",
-    }),
+    schema: zError,
   },
 ]);
 

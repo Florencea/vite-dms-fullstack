@@ -13,6 +13,7 @@ const openApiDocument = openApiBuilder({
     const tagMap: Record<string, string[]> = {
       "/auth": ["auth"],
       "/user/list": ["user"],
+      "/user": ["user"],
     };
     return tagMap[path];
   })

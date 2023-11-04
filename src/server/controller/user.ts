@@ -1,6 +1,10 @@
 import { zodiosContext } from "@zodios/express";
 import userApi from "../../api/user";
-import { makeError, validationErrorHandler } from "../../api/util";
+import {
+  makeError,
+  makeResponse,
+  validationErrorHandler,
+} from "../../api/util";
 import { UserService } from "../services/UserService";
 
 const ctx = zodiosContext();
@@ -10,10 +14,7 @@ const userController = ctx.router(userApi, { validationErrorHandler });
 userController.get("/user/list", async (req, res) => {
   try {
     const data = await UserService.getList(req.query);
-    res.status(200).json({
-      message: `ok, by ${req.headers.authorization}`,
-      data,
-    });
+    res.status(200).json(makeResponse(data));
   } catch (err) {
     const { statusCode, body } = makeError(err);
     res.status(statusCode).json(body);

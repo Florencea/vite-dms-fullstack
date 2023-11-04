@@ -19,6 +19,6 @@ export class UserService {
         updatedAt: true,
       },
     });
-    return { total, list };
+    return { list, total };
   }
 }

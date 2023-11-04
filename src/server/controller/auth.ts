@@ -1,6 +1,11 @@
 import { zodiosContext } from "@zodios/express";
 import authApi from "../../api/auth";
-import { makeError, throwError, validationErrorHandler } from "../../api/util";
+import {
+  makeError,
+  makeResponse,
+  throwError,
+  validationErrorHandler,
+} from "../../api/util";
 import { AuthService } from "../services/AuthService";
 
 const ctx = zodiosContext();
@@ -11,10 +16,7 @@ authController.post("/auth", async (req, res) => {
   try {
     const data = await AuthService.login(req.body);
     if (data) {
-      res.status(200).json({
-        message: "ok",
-        data,
-      });
+      res.status(200).json(makeResponse(data));
     } else {
       throwError({ statusCode: 500, message: "Server Error" });
     }

@@ -18,8 +18,8 @@ export const makeZSuccessResponse = <T extends Record<string, z.ZodTypeAny>>(
   const { data } = params;
   return z
     .object({
-      message: z.string().default("ok"),
-      timestamp: z.string().datetime().default(dayjs().toISOString()),
+      message: z.string(),
+      timestamp: z.string().datetime(),
       data,
     })
     .required();
@@ -27,30 +27,26 @@ export const makeZSuccessResponse = <T extends Record<string, z.ZodTypeAny>>(
 
 export type ResponseT = z.infer<ReturnType<typeof makeZSuccessResponse>>;
 
-export const makeResponse = <T extends Record<string, z.ZodTypeAny>>(
-  params: ZSuccessResponseParamsT<T>,
+export const makeResponse = <T extends Record<string, unknown>>(
+  data: T,
+  message?: string,
 ) => {
-  const { data } = params;
   return {
-    message: "ok",
+    message: message ?? "ok",
     timestamp: dayjs().toISOString(),
     data,
   } satisfies ResponseT;
 };
 
-export const makeZErrorResponse = (params: ZErrorResponseParamsT) => {
-  const { message } = params;
-  const zError = z
-    .object({
-      message: z.string().default(message),
-      timestamp: z.string().datetime().default(dayjs().toISOString()),
-      data: z.object({}).default({}),
-    })
-    .required();
-  return zError;
-};
+export const zError = z
+  .object({
+    message: z.string(),
+    timestamp: z.string().datetime(),
+    data: z.object({}).default({}),
+  })
+  .required();
 
-export type ErrorT = [number, z.infer<ReturnType<typeof makeZErrorResponse>>];
+export type ErrorT = [number, z.infer<typeof zError>];
 
 export const throwError = (params: ZErrorResponseParamsT) => {
   const { statusCode, message } = params;
