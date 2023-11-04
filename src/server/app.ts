@@ -1,8 +1,11 @@
+import { zodiosApp } from "@zodios/express";
 import compression from "compression";
-import express from "express";
+import { Express } from "express";
 import helmet from "helmet";
+import { serve, setup } from "swagger-ui-express";
 import ViteExpress from "vite-express";
-import apiRouter from "./api";
+import apiControllers from "./controller";
+import openApiDocument from "./openapi";
 
 const IS_PRODCTION = process.env.NODE_ENV === "production";
 const PORT = parseInt(process.env.PORT ?? "3000", 10);
@@ -12,7 +15,7 @@ const HOST_URL = IS_PRODCTION
   ? `port: ${PORT}, base: ${BASE}`
   : `http://localhost:${PORT}${BASE}`;
 
-const app = express();
+const app = zodiosApp();
 
 if (IS_PRODCTION) {
   app.disable("x-powered-by");
@@ -20,8 +23,11 @@ if (IS_PRODCTION) {
   app.use(compression());
 }
 
-app.use(API_PREFIX, apiRouter);
+app.use(API_PREFIX, ...apiControllers);
 
-ViteExpress.listen(app, PORT, () => {
+app.use("/docs", serve);
+app.use("/docs", setup(openApiDocument));
+
+ViteExpress.listen(app as Express, PORT, () => {
   console.info(`Server ready, ${HOST_URL}`);
 });

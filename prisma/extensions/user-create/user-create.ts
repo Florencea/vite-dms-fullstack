@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client";
 import argon2 from "argon2";
-import { generatePublicId } from "../generate-nanoid/public-id";
 
 export const applyExtension = () => {
   return Prisma.defineExtension({
@@ -9,7 +8,7 @@ export const applyExtension = () => {
       user: {
         create: async ({ args, query }) => {
           const password = await argon2.hash(args.data.password);
-          args.data = { ...args.data, password, publicId: generatePublicId() };
+          args.data = { ...args.data, password };
           return query(args);
         },
         upsert: async ({ args, query }) => {
@@ -17,7 +16,6 @@ export const applyExtension = () => {
           args.create = {
             ...args.create,
             password,
-            publicId: generatePublicId(),
           };
           args.update = {
             ...args.update,
