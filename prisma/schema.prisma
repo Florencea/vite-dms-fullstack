@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./database.sqlite"
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  publicId  String?   @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  account   String    @unique
+  password  String
+  email     String    @unique
+  name      String
+  phone     String?
+  website   String?
+  posts     Post[]
+  albums    Album[]
+  todos     Todo[]
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  publicId  String?   @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  title     String
+  body      String?
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int
+  comments  Comment[]
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  publicId  String?   @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  name      String
+  email     String
+  body      String?
+  postId    Int
+  post      Post      @relation(fields: [postId], references: [id])
+}
+
+model Album {
+  id        Int       @id @default(autoincrement())
+  publicId  String?   @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  title     String
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  photos    Photo[]
+}
+
+model Photo {
+  id        Int       @id @default(autoincrement())
+  publicId  String?   @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  url       String
+  albumId   Int
+  albums    Album     @relation(fields: [albumId], references: [id])
+}
+
+model Todo {
+  id        Int       @id @default(autoincrement())
+  publicId  String?   @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  title     String
+  completed Boolean
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+}
