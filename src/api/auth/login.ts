@@ -2,6 +2,8 @@ import { makeEndpoint, makeErrors, makeParameters } from "@zodios/core";
 import { z } from "zod";
 import { makeZSuccessResponse, zError } from "../util";
 
+const SECURITY_SCHEME = process.env.VITE_API_SECURITY ?? "cookie";
+
 const parameters = makeParameters([
   {
     name: "",
@@ -15,13 +17,18 @@ const parameters = makeParameters([
   },
 ]);
 
-const response = makeZSuccessResponse({
-  data: z
-    .object({
-      token: z.string(),
-    })
-    .required(),
-});
+const response =
+  SECURITY_SCHEME === "jwt"
+    ? makeZSuccessResponse({
+        data: z
+          .object({
+            token: z.string(),
+          })
+          .required(),
+      })
+    : makeZSuccessResponse({
+        data: z.object({}),
+      });
 
 const errors = makeErrors([
   {

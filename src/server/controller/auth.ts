@@ -26,7 +26,7 @@ authController.post("/auth", async (req, res) => {
           .setHeader("Set-Cookie", [
             `${SECURITY_SCHEME}=${data.token}; HttpOnly; Path=/; Max-Age=${maxAge}; Secure=True;`,
           ])
-          .json(makeResponse(data));
+          .json(makeResponse({}));
       }
     } else {
       throwError({ statusCode: 500, message: "Server Error" });

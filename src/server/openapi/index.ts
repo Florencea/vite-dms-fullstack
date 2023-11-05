@@ -39,6 +39,11 @@ export const SWAGGER_UI_OPTIONS: SwaggerUiOptions = {
     join(DOC_STATIC_ROUTE, "theme.css"),
     join(DOC_STATIC_ROUTE, "fonts.css"),
     join(DOC_STATIC_ROUTE, "custom.css"),
+    [
+      ...(DOC_SECURITY_SCHEME[0] === "token"
+        ? [join(DOC_STATIC_ROUTE, "cookie.css")]
+        : []),
+    ],
   ] as unknown as string,
   customJs: [
     join(DOC_STATIC_ROUTE, "highlight.js"),
