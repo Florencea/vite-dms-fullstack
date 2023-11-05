@@ -2,6 +2,7 @@ import { zodiosApp } from "@zodios/express";
 import compression from "compression";
 import { Express } from "express";
 import helmet from "helmet";
+import logger from "morgan";
 import { serve, setup } from "swagger-ui-express";
 import ViteExpress from "vite-express";
 import { protectedControllers, publicControllers } from "./controller";
@@ -26,6 +27,7 @@ app.use(compression());
 app.use("/docs", serve);
 app.use("/docs", setup(openApiDocument));
 
+app.use(API_PREFIX, logger(IS_PRODCTION ? "common" : "dev"));
 app.use(API_PREFIX, ...publicControllers);
 app.use(jwtHandler);
 app.use(API_PREFIX, ...protectedControllers);
