@@ -1,4 +1,4 @@
-import { bearerAuthScheme, openApiBuilder } from "@zodios/openapi";
+import { openApiBuilder } from "@zodios/openapi";
 import { join } from "node:path";
 import { SwaggerUiOptions } from "swagger-ui-express";
 import authApi from "../../api/auth";
@@ -7,7 +7,7 @@ import {
   API_PREFIX,
   BASE,
   DOC_DESCRIPTION,
-  DOC_SECURITY_SCHEME_NAME,
+  DOC_SECURITY_SCHEME,
   DOC_STATIC_ROUTE,
   DOC_TITLE,
   DOC_VERSION,
@@ -20,7 +20,7 @@ export const openApiDocument = openApiBuilder({
   description: DOC_DESCRIPTION,
 })
   .addServer({ url: API_PREFIX })
-  .addSecurityScheme(DOC_SECURITY_SCHEME_NAME, bearerAuthScheme())
+  .addSecurityScheme(...DOC_SECURITY_SCHEME)
   .setCustomTagsFn((path) => {
     return [path.split("/")[1]];
   })
@@ -31,7 +31,7 @@ export const openApiDocument = openApiBuilder({
   /**
    * protected api below
    */
-  .addProtectedApi(DOC_SECURITY_SCHEME_NAME, userApi)
+  .addProtectedApi(DOC_SECURITY_SCHEME[0], userApi)
   .build();
 
 export const SWAGGER_UI_OPTIONS: SwaggerUiOptions = {

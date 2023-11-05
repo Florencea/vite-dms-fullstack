@@ -1,3 +1,4 @@
+import { apiKeyAuthScheme, bearerAuthScheme } from "@zodios/openapi";
 import chalk from "chalk";
 import dayjs from "dayjs";
 import { readFileSync } from "node:fs";
@@ -89,9 +90,14 @@ export const DOC_VERSION = `${
   ).version
 }`;
 /**
- * OpenAPI Swagger Security Scheme Name
+ * OpenAPI Swagger Security Scheme
  */
-export const DOC_SECURITY_SCHEME_NAME = "jwt";
+export const DOC_SECURITY_SCHEME = [
+  process.env.VITE_API_SECURITY === "jwt" ? "jwt" : "token",
+  process.env.VITE_API_SECURITY === "jwt"
+    ? bearerAuthScheme()
+    : apiKeyAuthScheme({ in: "cookie", name: "token" }),
+] as const;
 
 const timestamp = chalk.gray(dayjs().toDate().toLocaleTimeString("en-US"));
 const plugin = chalk.bold.cyan("[vite-express]");

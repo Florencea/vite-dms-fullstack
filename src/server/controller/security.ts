@@ -2,7 +2,7 @@ import express from "express";
 import { makeError, throwError } from "../../api/util";
 import { AuthService } from "../services/AuthService";
 
-const jwtHandler: express.RequestHandler = async (req, res, next) => {
+const securityHandler: express.RequestHandler = async (req, res, next) => {
   try {
     if (res.headersSent) {
       return next();
@@ -20,4 +20,4 @@ const jwtHandler: express.RequestHandler = async (req, res, next) => {
   }
 };
 
-export default jwtHandler;
+export default securityHandler;

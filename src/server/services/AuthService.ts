@@ -4,6 +4,7 @@ import express from "express";
 import * as jose from "jose";
 import prisma from "../../../prisma";
 import { throwError } from "../../api/util";
+import { DOC_SECURITY_SCHEME } from "../config";
 
 type LoginT = {
   account: string;
@@ -11,7 +12,7 @@ type LoginT = {
 };
 
 export class AuthService {
-  private static jwtSettings = {
+  public static jwtSettings = {
     secretOrKey: "thisismysupersecretprivatekey1",
     issuer: "localhost",
     audience: "localhost",
@@ -35,7 +36,11 @@ export class AuthService {
   }
 
   public static async verify(req: express.Request) {
-    const authorization = req.headers.authorization;
+    const [SECURITY_SCHEME] = DOC_SECURITY_SCHEME;
+    const authorization =
+      SECURITY_SCHEME === "jwt"
+        ? req.headers.authorization
+        : req.cookies[SECURITY_SCHEME];
     if (!authorization) {
       throwError({ statusCode: 401, message: "No token provided" });
     } else {

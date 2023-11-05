@@ -1,5 +1,6 @@
 import { zodiosApp } from "@zodios/express";
 import compression from "compression";
+import cookieParser from "cookie-parser";
 import { Express, static as eStatic } from "express";
 import helmet from "helmet";
 import logger from "morgan";
@@ -17,19 +18,24 @@ import {
 } from "./config";
 import { protectedControllers, publicControllers } from "./controller";
 import errorController from "./controller/error";
-import jwtHandler from "./controller/jwt";
+import securityHandler from "./controller/security";
 import typegenController from "./controller/typegen";
 import { SWAGGER_UI_OPTIONS, openApiDocument } from "./openapi";
 
 const app = zodiosApp() as Express;
 
 /**
+ * Essential middleware
+ */
+app.disable("x-powered-by");
+app.use(cookieParser());
+app.use(compression());
+
+/**
  * Secure middleware in prodction
  */
 if (IS_PRODCTION) {
-  app.disable("x-powered-by");
   app.use(helmet());
-  app.use(compression());
 }
 
 /**
@@ -44,7 +50,7 @@ app.use(DOC_ROUTE, serve, setup(openApiDocument, SWAGGER_UI_OPTIONS));
  */
 app.use(API_PREFIX, logger(IS_PRODCTION ? "common" : "dev"));
 app.use(API_PREFIX, ...publicControllers);
-app.use(API_PREFIX, jwtHandler);
+app.use(API_PREFIX, securityHandler);
 app.use(API_PREFIX, ...protectedControllers);
 
 /**
