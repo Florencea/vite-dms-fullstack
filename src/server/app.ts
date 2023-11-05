@@ -18,6 +18,7 @@ import {
 } from "./config";
 import { protectedControllers, publicControllers } from "./controller";
 import errorController from "./controller/error";
+import notfoundController from "./controller/notfound";
 import securityHandler from "./controller/security";
 import typegenController from "./controller/typegen";
 import { SWAGGER_UI_OPTIONS, openApiDocument } from "./openapi";
@@ -52,6 +53,7 @@ app.use(API_PREFIX, logger(IS_PRODCTION ? "common" : "dev"));
 app.use(API_PREFIX, ...publicControllers);
 app.use(API_PREFIX, securityHandler);
 app.use(API_PREFIX, ...protectedControllers);
+app.use(API_PREFIX, notfoundController);
 
 /**
  * Error controllers

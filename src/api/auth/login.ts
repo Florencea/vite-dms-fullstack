@@ -1,6 +1,6 @@
-import { makeEndpoint, makeErrors, makeParameters } from "@zodios/core";
+import { makeEndpoint, makeParameters } from "@zodios/core";
 import { z } from "zod";
-import { makeZSuccessResponse, zError } from "../util";
+import { errors, makeZResponse } from "../util";
 
 const SECURITY_SCHEME = process.env.VITE_API_SECURITY ?? "cookie";
 
@@ -19,34 +19,16 @@ const parameters = makeParameters([
 
 const response =
   SECURITY_SCHEME === "jwt"
-    ? makeZSuccessResponse({
+    ? makeZResponse({
         data: z
           .object({
             token: z.string(),
           })
           .required(),
       })
-    : makeZSuccessResponse({
+    : makeZResponse({
         data: z.object({}),
       });
-
-const errors = makeErrors([
-  {
-    status: 400,
-    description: "Bad Request",
-    schema: zError,
-  },
-  {
-    status: 401,
-    description: "Unauthorized",
-    schema: zError,
-  },
-  {
-    status: "default",
-    description: "Server Error",
-    schema: zError,
-  },
-]);
 
 const login = makeEndpoint({
   method: "post",

@@ -24,7 +24,7 @@ const TYPEGEN_CONFIG: Record<string, Partial<Options>> = {
   },
 };
 
-typegenController.post("/:lang", async (req, res) => {
+typegenController.post("/:lang", async (req, res, next) => {
   try {
     const { lang } = req.params;
     const jsonInput = jsonInputForTargetLanguage(lang);
@@ -40,7 +40,7 @@ typegenController.post("/:lang", async (req, res) => {
     });
     res.json(result.lines);
   } catch (err) {
-    res.json([JSON.stringify(err)]);
+    next(err);
   }
 });
 

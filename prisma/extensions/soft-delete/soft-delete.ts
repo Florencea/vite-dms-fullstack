@@ -46,7 +46,7 @@ export const applyExtension = () => {
           // @ts-expect-error: Requires more types from Prisma
           return prisma[modelLowerCase].update({
             ...args,
-            data: { deleted: new Date() },
+            data: { deletedAt: new Date() },
           });
         },
         deleteMany: async ({ args, model }) => {
@@ -56,7 +56,7 @@ export const applyExtension = () => {
           // @ts-expect-error: Requires more types from Prisma
           return prisma[modelLowerCase].updateMany({
             ...args,
-            data: { deleted: new Date() },
+            data: { deletedAt: new Date() },
           });
         },
       },

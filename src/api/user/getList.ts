@@ -1,6 +1,6 @@
-import { makeEndpoint, makeErrors, makeParameters } from "@zodios/core";
+import { makeEndpoint, makeParameters } from "@zodios/core";
 import { z } from "zod";
-import { makeZSuccessResponse, zError } from "../util";
+import { errors, makeZResponse } from "../util";
 
 const parameters = makeParameters([
   {
@@ -15,12 +15,12 @@ const parameters = makeParameters([
   },
 ]);
 
-const response = makeZSuccessResponse({
+const response = makeZResponse({
   data: z
     .object({
       list: z
         .object({
-          id: z.string(),
+          id: z.string().uuid(),
           name: z.string(),
           createdAt: z.date(),
           updatedAt: z.date(),
@@ -31,27 +31,9 @@ const response = makeZSuccessResponse({
     .required(),
 });
 
-const errors = makeErrors([
-  {
-    status: 400,
-    description: "Bad Request",
-    schema: zError,
-  },
-  {
-    status: 401,
-    description: "Unauthorized",
-    schema: zError,
-  },
-  {
-    status: "default",
-    description: "Server Error",
-    schema: zError,
-  },
-]);
-
 const getList = makeEndpoint({
   method: "get",
-  path: "/user/list",
+  path: "/user",
   description: "Get user list",
   parameters,
   response,

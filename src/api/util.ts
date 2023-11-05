@@ -1,81 +1,77 @@
-import dayjs from "dayjs";
+import { makeErrors } from "@zodios/core";
 import express from "express";
 import { get } from "radash";
 import { ZodIssue, z } from "zod";
 
-type ZSuccessResponseParamsT<T extends Record<string, z.ZodTypeAny>> = {
+export const makeZResponse = <T extends Record<string, z.ZodTypeAny>>(params: {
   data: z.ZodObject<T>;
-};
-
-type ZErrorResponseParamsT = {
-  statusCode: number;
-  message: string;
-};
-
-export const makeZSuccessResponse = <T extends Record<string, z.ZodTypeAny>>(
-  params: ZSuccessResponseParamsT<T>,
-) => {
+}) => {
   const { data } = params;
   return z
     .object({
       message: z.string(),
-      timestamp: z.string().datetime(),
+      timestamp: z.date(),
       data,
     })
     .required();
 };
 
-export type ResponseT = z.infer<ReturnType<typeof makeZSuccessResponse>>;
+export const throwError = (params: { statusCode: number; message: string }) => {
+  const { statusCode, message } = params;
+  throw {
+    name: "ZError",
+    message: "Server Error",
+    zError: {
+      statusCode,
+      body: {
+        message,
+        timestamp: new Date(),
+        data: {},
+      },
+    },
+  } satisfies {
+    name: string;
+    message: string;
+    zError: {
+      statusCode: number;
+      body: { message: string; timestamp: Date; data: Record<string, unknown> };
+    };
+  };
+};
 
-export const makeResponse = <T extends Record<string, unknown>>(
+export const makeSuccessResponse = <T extends Record<string, unknown>>(
   data: T,
   message?: string,
 ) => {
   return {
     message: message ?? "ok",
-    timestamp: dayjs().toISOString(),
+    timestamp: new Date(),
     data,
-  } satisfies ResponseT;
+  } satisfies z.infer<ReturnType<typeof makeZResponse>>;
 };
 
-export const zError = z
-  .object({
-    message: z.string(),
-    timestamp: z.string().datetime(),
-    data: z.object({}).default({}),
-  })
-  .required();
-
-export type ErrorT = [number, z.infer<typeof zError>];
-
-export const throwError = (params: ZErrorResponseParamsT) => {
-  const { statusCode, message } = params;
-  throw [
-    statusCode,
-    {
-      message,
-      timestamp: dayjs().toISOString(),
-      data: {},
-    },
-  ] satisfies ErrorT;
-};
-
-export const makeError = (err: unknown) => {
+export const makeErrorResponse = (err: unknown) => {
   const errName = get<string>(err, "name", "Error");
-  const errMessage =
-    get<string>(err, "message", "Server error").split("\n").at(-1) ??
-    "Server error";
-  const errMessageForError = `${errName}: ${errMessage}`;
-  const statusCode = get<number>(err, "[0]", 500);
-  const message = get<string>(err, "[1].message", errMessageForError);
-  return {
-    statusCode,
-    body: {
-      message,
-      timestamp: get<string>(err, "[1].timestamp", dayjs().toISOString()),
-      data: {},
-    },
-  };
+  if (errName === "ZError") {
+    return get<{
+      statusCode: number;
+      body: { message: string; timestamp: Date; data: Record<string, unknown> };
+    }>(err, "zError");
+  } else {
+    const validationErrorNames = ["PrismaClientKnownRequestError"];
+    const statusCode = validationErrorNames.includes(errName) ? 400 : 500;
+    const errMessageFull = get<string>(err, "message", "Server error");
+    const errMessage = errMessageFull.split("\n").at(-1) ?? "Server error";
+    const message = `${errName}: ${errMessage}`;
+    return {
+      statusCode,
+      body: {
+        message,
+        timestamp: new Date(),
+        data: {},
+      },
+    };
+  }
 };
 
 export const validationErrorHandler = async (
@@ -96,7 +92,21 @@ export const validationErrorHandler = async (
       .join("\n");
     throwError({ statusCode: 400, message });
   } catch (err) {
-    const { statusCode, body } = makeError(err);
+    const { statusCode, body } = makeErrorResponse(err);
     res.status(statusCode).json(body);
   }
 };
+
+export const errors = makeErrors([
+  {
+    status: "default",
+    description: "Failed",
+    schema: z
+      .object({
+        message: z.string(),
+        timestamp: z.date(),
+        data: z.object({}).default({}),
+      })
+      .required(),
+  },
+]);

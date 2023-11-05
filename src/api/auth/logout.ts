@@ -1,23 +1,10 @@
-import { makeEndpoint, makeErrors } from "@zodios/core";
+import { makeEndpoint } from "@zodios/core";
 import { z } from "zod";
-import { makeZSuccessResponse, zError } from "../util";
+import { errors, makeZResponse } from "../util";
 
-const response = makeZSuccessResponse({
+const response = makeZResponse({
   data: z.object({}),
 });
-
-const errors = makeErrors([
-  {
-    status: 401,
-    description: "Unauthorized",
-    schema: zError,
-  },
-  {
-    status: "default",
-    description: "Server Error",
-    schema: zError,
-  },
-]);
 
 const logout = makeEndpoint({
   method: "delete",

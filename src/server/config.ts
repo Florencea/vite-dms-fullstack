@@ -1,6 +1,5 @@
 import { apiKeyAuthScheme, bearerAuthScheme } from "@zodios/openapi";
 import chalk from "chalk";
-import dayjs from "dayjs";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -99,7 +98,7 @@ export const DOC_SECURITY_SCHEME = [
     : apiKeyAuthScheme({ in: "cookie", name: "token" }),
 ] as const;
 
-const timestamp = chalk.gray(dayjs().toDate().toLocaleTimeString("en-US"));
+const timestamp = chalk.gray(new Date().toLocaleTimeString("en-US"));
 const plugin = chalk.bold.cyan("[vite-express]");
 const message = chalk.green("Server Ready on");
 const serverUrl = chalk.bold.cyan(

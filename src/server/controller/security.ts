@@ -1,5 +1,5 @@
 import express from "express";
-import { makeError, throwError } from "../../api/util";
+import { throwError } from "../../api/util";
 import { AuthService } from "../services/AuthService";
 
 const securityHandler: express.RequestHandler = async (req, res, next) => {
@@ -15,8 +15,7 @@ const securityHandler: express.RequestHandler = async (req, res, next) => {
       next();
     }
   } catch (err) {
-    const { statusCode, body } = makeError(err);
-    res.status(statusCode).json(body);
+    next(err);
   }
 };
 
