@@ -6,7 +6,7 @@ const SECURITY_SCHEME = process.env.VITE_API_SECURITY ?? "cookie";
 
 const parameters = makeParameters([
   {
-    name: "",
+    name: "data",
     type: "Body",
     schema: z
       .object({
@@ -16,6 +16,8 @@ const parameters = makeParameters([
       .required(),
   },
 ]);
+
+export type ReqAuthLoginT = z.infer<(typeof parameters)["0"]["schema"]>;
 
 const response =
   SECURITY_SCHEME === "jwt"
@@ -29,6 +31,10 @@ const response =
     : makeZResponse({
         data: z.object({}),
       });
+
+type ResAuthLoginJwtT = { token: string };
+type ResAuthLoginCookieT = Record<string, never>;
+export type ResAuthLoginT = ResAuthLoginJwtT | ResAuthLoginCookieT;
 
 const login = makeEndpoint({
   method: "post",

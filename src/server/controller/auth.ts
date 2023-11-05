@@ -5,7 +5,7 @@ import {
   throwError,
   validationErrorHandler,
 } from "../../api/util";
-import { DOC_SECURITY_SCHEME } from "../config";
+import { DOC_SECURITY_SCHEME, JWT_SETTINGS } from "../config";
 import { AuthService } from "../services/AuthService";
 
 const ctx = zodiosContext();
@@ -20,7 +20,7 @@ authController.post("/auth", async (req, res, next) => {
       if (SECURITY_SCHEME === "jwt") {
         res.json(makeSuccessResponse(data));
       } else {
-        const { maxAge } = AuthService.jwtSettings;
+        const { maxAge } = JWT_SETTINGS;
         res
           .setHeader("Set-Cookie", [
             `${SECURITY_SCHEME}=${data.token}; HttpOnly; Path=/; Max-Age=${maxAge}; Secure=True;`,

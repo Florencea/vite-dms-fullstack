@@ -22,6 +22,8 @@ const parameters = makeParameters([
   },
 ]);
 
+export type ReqUserUpdateT = z.infer<(typeof parameters)["1"]["schema"]>;
+
 const response = makeZResponse({
   data: z
     .object({
@@ -36,6 +38,8 @@ const response = makeZResponse({
     })
     .required(),
 });
+
+export type ResUserUpdateT = z.infer<typeof response>["data"];
 
 const update = makeEndpoint({
   method: "patch",

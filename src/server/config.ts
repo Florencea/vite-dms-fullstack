@@ -110,3 +110,12 @@ const serverUrl = chalk.bold.cyan(
  * Server ready message
  */
 export const SERVER_READY_MESSAGE = `${timestamp} ${plugin} ${message} ${serverUrl}`;
+/**
+ * JWT settings
+ */
+export const JWT_SETTINGS = {
+  secretOrKey: process.env.JWT_SECRET ?? "thisismysupersecretprivatekey1",
+  issuer: "localhost",
+  audience: "localhost",
+  maxAge: 3600,
+};

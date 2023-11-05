@@ -25,6 +25,8 @@ const response = makeZResponse({
     .required(),
 });
 
+export type ResUserGetT = z.infer<typeof response>["data"];
+
 const get = makeEndpoint({
   method: "get",
   path: "/user/:id",

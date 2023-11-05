@@ -19,6 +19,8 @@ const parameters = makeParameters([
   },
 ]);
 
+export type ReqUserCreateT = z.infer<(typeof parameters)["0"]["schema"]>;
+
 const response = makeZResponse({
   data: z
     .object({
@@ -33,6 +35,8 @@ const response = makeZResponse({
     })
     .required(),
 });
+
+export type ResUserCreateT = z.infer<typeof response>["data"];
 
 const create = makeEndpoint({
   method: "post",

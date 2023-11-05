@@ -1,21 +1,14 @@
-import { User } from "@prisma/client";
 import prisma from "../../../prisma";
+import { ReqUserCreateT, ResUserCreateT } from "../../api/user/create";
+import { ResUserGetT } from "../../api/user/get";
+import { ReqUserGetListT, ResUserGetListT } from "../../api/user/getList";
+import { ReqUserUpdateT, ResUserUpdateT } from "../../api/user/update";
 import { throwError } from "../../api/util";
 
-type ParamsT = {
-  current: number;
-  pageSize: number;
-};
-
-type UserCreateT = Pick<
-  User,
-  "account" | "password" | "email" | "name" | "phone" | "website"
->;
-
-type UserUpdateT = Pick<User, "email" | "name" | "phone" | "website">;
-
 export class UserService {
-  public static async getList(params: ParamsT) {
+  public static async getList(
+    params: ReqUserGetListT,
+  ): Promise<ResUserGetListT> {
     const { current, pageSize } = params;
     const total = await prisma.user.count();
     const list = await prisma.user.findMany({
@@ -31,7 +24,7 @@ export class UserService {
     return { list, total };
   }
 
-  public static async get(id: string) {
+  public static async get(id: string): Promise<ResUserGetT | null> {
     const user = await prisma.user.findUnique({
       where: { id },
       select: {
@@ -48,7 +41,9 @@ export class UserService {
     return user;
   }
 
-  public static async create(data: UserCreateT) {
+  public static async create(
+    data: ReqUserCreateT,
+  ): Promise<ResUserCreateT | undefined> {
     const { account, password, email, name, phone, website } = data;
     const oldUser = await prisma.user.findFirst({
       where: {
@@ -85,7 +80,10 @@ export class UserService {
     }
   }
 
-  public static async update(id: string, data: Partial<UserUpdateT>) {
+  public static async update(
+    id: string,
+    data: ReqUserUpdateT,
+  ): Promise<ResUserUpdateT | undefined> {
     const { email, name, phone, website } = data;
     const oldUser = await this.get(id);
     if (!oldUser) {
@@ -109,7 +107,7 @@ export class UserService {
     }
   }
 
-  public static async remove(id: string) {
+  public static async remove(id: string): Promise<void> {
     const oldUser = await this.get(id);
     if (!oldUser) {
       throwError({ statusCode: 404, message: "User not found" });

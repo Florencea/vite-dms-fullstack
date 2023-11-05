@@ -3,23 +3,14 @@ import argon2 from "argon2";
 import express from "express";
 import * as jose from "jose";
 import prisma from "../../../prisma";
+import { ReqAuthLoginT, ResAuthLoginT } from "../../api/auth/login";
 import { throwError } from "../../api/util";
-import { DOC_SECURITY_SCHEME } from "../config";
-
-type LoginT = {
-  account: string;
-  password: string;
-};
+import { DOC_SECURITY_SCHEME, JWT_SETTINGS } from "../config";
 
 export class AuthService {
-  public static jwtSettings = {
-    secretOrKey: "thisismysupersecretprivatekey1",
-    issuer: "localhost",
-    audience: "localhost",
-    maxAge: 3600,
-  };
-
-  public static async login(params: LoginT) {
+  public static async login(
+    params: ReqAuthLoginT,
+  ): Promise<ResAuthLoginT | undefined> {
     const { account, password } = params;
     const user = await prisma.user.findUnique({ where: { account } });
     if (!user) {
@@ -60,7 +51,7 @@ export class AuthService {
   }
 
   private static async createJwt(user: User) {
-    const { issuer, audience, secretOrKey, maxAge } = this.jwtSettings;
+    const { issuer, audience, secretOrKey, maxAge } = JWT_SETTINGS;
     const now = Date.now();
     const secret = new TextEncoder().encode(secretOrKey);
 
@@ -81,7 +72,7 @@ export class AuthService {
 
   private static async verifyJwt(token: string) {
     try {
-      const { secretOrKey } = this.jwtSettings;
+      const { secretOrKey } = JWT_SETTINGS;
       const secret = new TextEncoder().encode(secretOrKey);
       const { payload } = await jose.jwtVerify(token, secret);
       return payload.sub;

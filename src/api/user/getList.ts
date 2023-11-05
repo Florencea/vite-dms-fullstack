@@ -15,6 +15,11 @@ const parameters = makeParameters([
   },
 ]);
 
+export type ReqUserGetListT = {
+  current: number;
+  pageSize: number;
+};
+
 const response = makeZResponse({
   data: z
     .object({
@@ -30,6 +35,8 @@ const response = makeZResponse({
     })
     .required(),
 });
+
+export type ResUserGetListT = z.infer<typeof response>["data"];
 
 const getList = makeEndpoint({
   method: "get",
