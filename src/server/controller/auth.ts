@@ -16,7 +16,7 @@ authController.post("/auth", async (req, res) => {
   try {
     const data = await AuthService.login(req.body);
     if (data) {
-      res.status(200).json(makeResponse(data));
+      res.json(makeResponse(data));
     } else {
       throwError({ statusCode: 500, message: "Server Error" });
     }

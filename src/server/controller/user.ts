@@ -14,7 +14,7 @@ const userController = ctx.router(userApi, { validationErrorHandler });
 userController.get("/user/list", async (req, res) => {
   try {
     const data = await UserService.getList(req.query);
-    res.status(200).json(makeResponse(data));
+    res.json(makeResponse(data));
   } catch (err) {
     const { statusCode, body } = makeError(err);
     res.status(statusCode).json(body);
