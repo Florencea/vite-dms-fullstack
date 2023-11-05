@@ -10,12 +10,7 @@ const openApiDocument = openApiBuilder({
   .addServer({ url: "/api" })
   .addSecurityScheme("jwt", bearerAuthScheme())
   .setCustomTagsFn((path) => {
-    const tagMap: Record<string, string[]> = {
-      "/auth": ["auth"],
-      "/user/list": ["user"],
-      "/user": ["user"],
-    };
-    return tagMap[path];
+    return [path.split("/")[1]];
   })
   .addPublicApi(authApi)
   .addProtectedApi("jwt", userApi)

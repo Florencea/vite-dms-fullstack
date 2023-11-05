@@ -29,7 +29,7 @@ app.use("/docs", setup(openApiDocument));
 
 app.use(API_PREFIX, logger(IS_PRODCTION ? "common" : "dev"));
 app.use(API_PREFIX, ...publicControllers);
-app.use(jwtHandler);
+app.use(API_PREFIX, jwtHandler);
 app.use(API_PREFIX, ...protectedControllers);
 
 app.use(errorHandler);
