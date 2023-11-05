@@ -5,6 +5,14 @@
 - Backend: express + prisma + jwt
 - API and Type: zod + zodios
 
+## Usage
+
+- Set `JWT_SECRET` in `.env.local` file.
+- Development: `npm run dev`
+- Build: `npm run build`
+- Prodction: `npm start`
+- Database migrate: `npm run migrate`
+
 ## Feature
 
 - Unified API definition, using same type and type validation in both frontend and backend

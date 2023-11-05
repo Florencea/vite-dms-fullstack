@@ -2,6 +2,7 @@ import { apiKeyAuthScheme, bearerAuthScheme } from "@zodios/openapi";
 import chalk from "chalk";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { exit } from "node:process";
 
 /**
  * Is Server in production
@@ -110,11 +111,17 @@ const serverUrl = chalk.bold.cyan(
  * Server ready message
  */
 export const SERVER_READY_MESSAGE = `${timestamp} ${plugin} ${message} ${serverUrl}`;
+const secretOrKey = process.env.JWT_SECRET;
+const messageError = chalk.red("No JWT_SECRET found in .env.local, exit");
+if (!secretOrKey) {
+  console.error(`${timestamp} ${plugin} ${messageError}`);
+  exit(1);
+}
 /**
  * JWT settings
  */
 export const JWT_SETTINGS = {
-  secretOrKey: process.env.JWT_SECRET ?? "thisismysupersecretprivatekey1",
+  secretOrKey,
   issuer: "localhost",
   audience: "localhost",
   maxAge: 3600,

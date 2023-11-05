@@ -2,11 +2,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "dotenv nodemon src/server/app.ts",
-    "start": "dotenv vite build && NODE_ENV=production dotenv tsx src/server/app.ts",
+    "dev": "dotenv -e .env.local nodemon src/server/app.ts",
+    "build": "dotenv -e .env.local vite build",
+    "start": "NODE_ENV=production dotenv -e .env.local tsx src/server/app.ts",
     "lint": "eslint --ext ts,tsx . && tsc",
     "format": "prettier '**/*' --write --ignore-unknown --cache",
-    "db:migrate": "npx prisma migrate dev --name init && npx prisma db seed"
+    "migrate": "npx prisma migrate dev --name init && npx prisma db seed"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.17.2",
