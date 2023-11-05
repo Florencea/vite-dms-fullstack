@@ -1,39 +1,57 @@
 import { zodiosApp } from "@zodios/express";
 import compression from "compression";
-import { Express } from "express";
+import { Express, static as eStatic } from "express";
 import helmet from "helmet";
 import logger from "morgan";
 import { serve, setup } from "swagger-ui-express";
 import ViteExpress from "vite-express";
+import {
+  API_PREFIX,
+  DOC_ROUTE,
+  DOC_STATIC_PATH,
+  DOC_STATIC_ROUTE,
+  DOC_TYPEGEN_ROUTE,
+  IS_PRODCTION,
+  PORT,
+  SERVER_READY_MESSAGE,
+} from "./config";
 import { protectedControllers, publicControllers } from "./controller";
-import errorHandler from "./controller/error";
+import errorController from "./controller/error";
 import jwtHandler from "./controller/jwt";
-import openApiDocument from "./openapi";
+import typegenController from "./controller/typegen";
+import { SWAGGER_UI_OPTIONS, openApiDocument } from "./openapi";
 
-const IS_PRODCTION = process.env.NODE_ENV === "production";
-const PORT = parseInt(process.env.PORT ?? "3000", 10);
-const BASE = process.env.VITE_WEB_BASE ?? "/";
-const API_PREFIX = process.env.VITE_API_PREFIX ?? "/api";
-const HOST_URL = IS_PRODCTION
-  ? `port: ${PORT}, base: ${BASE}`
-  : `http://localhost:${PORT}${BASE}`;
+const app = zodiosApp() as Express;
 
-const app = zodiosApp();
+/**
+ * Secure middleware in prodction
+ */
+if (IS_PRODCTION) {
+  app.disable("x-powered-by");
+  app.use(helmet());
+  app.use(compression());
+}
 
-app.disable("x-powered-by");
-app.use(helmet());
-app.use(compression());
+/**
+ * OpenAPI and typegen controllers
+ */
+app.use(DOC_TYPEGEN_ROUTE, typegenController);
+app.use(DOC_STATIC_ROUTE, eStatic(DOC_STATIC_PATH));
+app.use(DOC_ROUTE, serve, setup(openApiDocument, SWAGGER_UI_OPTIONS));
 
-app.use("/docs", serve);
-app.use("/docs", setup(openApiDocument));
-
+/**
+ * API controllers
+ */
 app.use(API_PREFIX, logger(IS_PRODCTION ? "common" : "dev"));
 app.use(API_PREFIX, ...publicControllers);
 app.use(API_PREFIX, jwtHandler);
 app.use(API_PREFIX, ...protectedControllers);
 
-app.use(errorHandler);
+/**
+ * Error controllers
+ */
+app.use(errorController);
 
-ViteExpress.listen(app as Express, PORT, () => {
-  console.info(`Server ready, ${HOST_URL}`);
+ViteExpress.listen(app, PORT, () => {
+  console.info(SERVER_READY_MESSAGE);
 });

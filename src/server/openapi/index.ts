@@ -1,19 +1,62 @@
 import { bearerAuthScheme, openApiBuilder } from "@zodios/openapi";
+import { join } from "node:path";
+import { SwaggerUiOptions } from "swagger-ui-express";
 import authApi from "../../api/auth";
 import userApi from "../../api/user";
+import {
+  API_PREFIX,
+  BASE,
+  DOC_DESCRIPTION,
+  DOC_SECURITY_SCHEME_NAME,
+  DOC_STATIC_ROUTE,
+  DOC_TITLE,
+  DOC_VERSION,
+  FAVICON,
+} from "../config";
 
-const openApiDocument = openApiBuilder({
-  title: `OpenAPI for ${process.env.VITE_TITLE ?? "system"}`,
-  version: "1.0.0",
-  description: "A simple API",
+export const openApiDocument = openApiBuilder({
+  title: DOC_TITLE,
+  version: DOC_VERSION,
+  description: DOC_DESCRIPTION,
 })
-  .addServer({ url: "/api" })
-  .addSecurityScheme("jwt", bearerAuthScheme())
+  .addServer({ url: API_PREFIX })
+  .addSecurityScheme(DOC_SECURITY_SCHEME_NAME, bearerAuthScheme())
   .setCustomTagsFn((path) => {
     return [path.split("/")[1]];
   })
+  /**
+   * public api below
+   */
   .addPublicApi(authApi)
-  .addProtectedApi("jwt", userApi)
+  /**
+   * protected api below
+   */
+  .addProtectedApi(DOC_SECURITY_SCHEME_NAME, userApi)
   .build();
 
-export default openApiDocument;
+export const SWAGGER_UI_OPTIONS: SwaggerUiOptions = {
+  customCssUrl: [
+    join(DOC_STATIC_ROUTE, "theme.css"),
+    join(DOC_STATIC_ROUTE, "fonts.css"),
+    join(DOC_STATIC_ROUTE, "custom.css"),
+  ] as unknown as string,
+  customJs: [
+    join(DOC_STATIC_ROUTE, "highlight.js"),
+    join(DOC_STATIC_ROUTE, "custom.js"),
+  ] as unknown as string,
+  swaggerOptions: {
+    docExpansion: "list",
+    persistAuthorization: true,
+    deepLinking: true,
+    displayRequestDuration: true,
+    defaultModelRendering: "example",
+    defaultModelExpandDepth: 9999,
+    tagsSorter: "alpha",
+    filter: true,
+    withCredentials: true,
+    syntaxHighlight: false,
+    requestSnippetsEnabled: false,
+  },
+  customSiteTitle: DOC_TITLE,
+  customfavIcon: join(BASE, FAVICON),
+};

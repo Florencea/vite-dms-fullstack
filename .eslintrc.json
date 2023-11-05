@@ -1,5 +1,6 @@
 {
   "root": true,
+  "globals": { "hljs": true },
   "env": { "browser": true, "es2020": true, "node": true },
   "settings": {
     "react": {

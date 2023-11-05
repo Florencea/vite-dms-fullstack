@@ -2,9 +2,10 @@
   "delay": 1,
   "quiet": true,
   "verbose": true,
-  "watch": ["src/server", "src/api"],
+  "watch": ["src/server", "src/api", "package.json"],
   "ignore": "src/router.ts",
   "execMap": {
     "ts": "tsx"
-  }
+  },
+  "ext": "js,ts,jsx,tsx,json,md"
 }

@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import express from "express";
 import { get } from "radash";
 
-const errorHandler: express.ErrorRequestHandler = (err, _, res, next) => {
+const errorController: express.ErrorRequestHandler = (err, _, res, next) => {
   if (res.headersSent) {
     return next(err);
   }
@@ -17,4 +17,4 @@ const errorHandler: express.ErrorRequestHandler = (err, _, res, next) => {
   });
 };
 
-export default errorHandler;
+export default errorController;
