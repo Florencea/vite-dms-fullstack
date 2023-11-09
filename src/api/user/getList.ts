@@ -15,10 +15,10 @@ const parameters = makeParameters([
   },
 ]);
 
-export type ReqUserGetListT = {
+export interface ReqUserGetListT {
   current: number;
   pageSize: number;
-};
+}
 
 const response = makeZResponse({
   data: z

@@ -1,6 +1,5 @@
 {
   "root": true,
-  "globals": { "hljs": true },
   "env": { "browser": true, "es2020": true, "node": true },
   "settings": {
     "react": {
@@ -10,7 +9,9 @@
   "ignorePatterns": ["/public", "/dist"],
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/strict-type-checked",
+    "plugin:@typescript-eslint/stylistic-type-checked",
     "plugin:react/recommended",
     "plugin:react/jsx-runtime",
     "plugin:react-hooks/recommended",
@@ -18,6 +19,7 @@
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
+    "project": "./tsconfig.eslint.json",
     "warnOnUnsupportedTypeScriptVersion": false
   },
   "plugins": ["react-refresh"],

@@ -35,10 +35,13 @@ export default function Index() {
               }}
             />
             <Button
-              onClick={async () => {
-                const res = await fetch("/api/photos?id=1");
-                const data = await res.json();
-                console.log(data);
+              onClick={() => {
+                const fetchData = async () => {
+                  const res = await fetch("/api/photos?id=1");
+                  const data = (await res.json()) as unknown;
+                  console.log(data);
+                };
+                void fetchData();
               }}
             >
               Fetch

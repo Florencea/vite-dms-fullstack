@@ -24,24 +24,27 @@ const TYPEGEN_CONFIG: Record<string, Partial<Options>> = {
   },
 };
 
-typegenController.post("/:lang", async (req, res, next) => {
-  try {
-    const { lang } = req.params;
-    const jsonInput = jsonInputForTargetLanguage(lang);
-    await jsonInput.addSource({
-      name: "Example",
-      samples: [JSON.stringify(req.body)],
-    });
-    const inputData = new InputData();
-    inputData.addInput(jsonInput);
-    const result = await quicktype({
-      inputData,
-      ...TYPEGEN_CONFIG[lang],
-    });
-    res.json(result.lines);
-  } catch (err) {
-    next(err);
-  }
+typegenController.post("/:lang", (req, res, next) => {
+  const handler = async () => {
+    try {
+      const { lang } = req.params;
+      const jsonInput = jsonInputForTargetLanguage(lang);
+      await jsonInput.addSource({
+        name: "Example",
+        samples: [JSON.stringify(req.body)],
+      });
+      const inputData = new InputData();
+      inputData.addInput(jsonInput);
+      const result = await quicktype({
+        inputData,
+        ...TYPEGEN_CONFIG[lang],
+      });
+      res.json(result.lines);
+    } catch (err) {
+      next(err);
+    }
+  };
+  void handler();
 });
 
 export default typegenController;

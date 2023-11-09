@@ -6,9 +6,7 @@ import { ReqUserUpdateT, ResUserUpdateT } from "../../api/user/update";
 import { throwError } from "../../api/util";
 
 export class UserService {
-  public static async getList(
-    params: ReqUserGetListT,
-  ): Promise<ResUserGetListT> {
+  public async getList(params: ReqUserGetListT): Promise<ResUserGetListT> {
     const { current, pageSize } = params;
     const total = await prisma.user.count();
     const list = await prisma.user.findMany({
@@ -24,7 +22,7 @@ export class UserService {
     return { list, total };
   }
 
-  public static async get(id: string): Promise<ResUserGetT | null> {
+  public async get(id: string): Promise<ResUserGetT | null> {
     const user = await prisma.user.findUnique({
       where: { id },
       select: {
@@ -41,7 +39,7 @@ export class UserService {
     return user;
   }
 
-  public static async create(
+  public async create(
     data: ReqUserCreateT,
   ): Promise<ResUserCreateT | undefined> {
     const { account, password, email, name, phone, website } = data;
@@ -80,7 +78,7 @@ export class UserService {
     }
   }
 
-  public static async update(
+  public async update(
     id: string,
     data: ReqUserUpdateT,
   ): Promise<ResUserUpdateT | undefined> {
@@ -107,7 +105,7 @@ export class UserService {
     }
   }
 
-  public static async remove(id: string): Promise<void> {
+  public async remove(id: string): Promise<void> {
     const oldUser = await this.get(id);
     if (!oldUser) {
       throwError({ statusCode: 404, message: "User not found" });

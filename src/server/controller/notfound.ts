@@ -4,7 +4,7 @@ import { throwError } from "../../api/util";
 const notfoundController: express.RequestHandler = (req, res, next) => {
   try {
     if (res.headersSent) {
-      return next();
+      next();
     }
     throwError({
       statusCode: 500,

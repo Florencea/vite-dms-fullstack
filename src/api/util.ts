@@ -3,6 +3,30 @@ import express from "express";
 import { get } from "radash";
 import { ZodIssue, z } from "zod";
 
+interface ZErrorT {
+  name: string;
+  message: string;
+  zError: {
+    statusCode: number;
+    body: { message: string; timestamp: Date; data: Record<string, unknown> };
+  };
+}
+
+class ZError extends Error {
+  name: string;
+  message: string;
+  zError: {
+    statusCode: number;
+    body: { message: string; timestamp: Date; data: Record<string, unknown> };
+  };
+  constructor({ name, message, zError }: ZErrorT) {
+    super(message);
+    this.name = name;
+    this.message = message;
+    this.zError = zError;
+  }
+}
+
 export const makeZResponse = <T extends Record<string, z.ZodTypeAny>>(params: {
   data: z.ZodObject<T>;
 }) => {
@@ -18,7 +42,7 @@ export const makeZResponse = <T extends Record<string, z.ZodTypeAny>>(params: {
 
 export const throwError = (params: { statusCode: number; message: string }) => {
   const { statusCode, message } = params;
-  throw {
+  throw new ZError({
     name: "ZError",
     message: "Server Error",
     zError: {
@@ -29,17 +53,10 @@ export const throwError = (params: { statusCode: number; message: string }) => {
         data: {},
       },
     },
-  } satisfies {
-    name: string;
-    message: string;
-    zError: {
-      statusCode: number;
-      body: { message: string; timestamp: Date; data: Record<string, unknown> };
-    };
-  };
+  });
 };
 
-export const makeSuccessResponse = <T extends Record<string, unknown>>(
+export const makeSuccessResponse = <T extends object>(
   data: T,
   message?: string,
 ) => {
@@ -74,7 +91,7 @@ export const makeErrorResponse = (err: unknown) => {
   }
 };
 
-export const validationErrorHandler = async (
+export const validationErrorHandler = (
   err: {
     context: string;
     error: ZodIssue[];

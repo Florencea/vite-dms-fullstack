@@ -39,7 +39,10 @@ const menuItems: MenuItemType[] = [
 
 const SiteTitle = ({ children }: { children?: ReactNode }) => {
   return children ? (
-    <Title>{`${children} - ${import.meta.env.VITE_TITLE}`}</Title>
+    <Title>
+      {children}
+      {` - ${import.meta.env.VITE_TITLE}`}
+    </Title>
   ) : (
     <Title>{import.meta.env.VITE_TITLE}</Title>
   );
@@ -49,7 +52,7 @@ export const RootLayout = () => {
   const { token } = theme.useToken();
   const { pathname } = useLocation();
   const to = useNavigate();
-  const currentLabel = menuItems.find((item) => item?.key === pathname)?.label;
+  const currentLabel = menuItems.find((item) => item.key === pathname)?.label;
   const disabledKeys = menuItems
     .filter(({ disabled, itemIcon }) => disabled && itemIcon === "")
     .map(({ key }) => key);
@@ -100,7 +103,9 @@ export const RootLayout = () => {
                   mode="inline"
                   defaultSelectedKeys={[pathname]}
                   items={menuItems.filter(({ disabled }) => !disabled)}
-                  onClick={({ key }) => to(key as Path)}
+                  onClick={({ key }) => {
+                    to(key as Path);
+                  }}
                 />
               </Sider>
               <Layout

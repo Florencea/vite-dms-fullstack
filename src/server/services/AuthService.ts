@@ -8,7 +8,7 @@ import { throwError } from "../../api/util";
 import { DOC_SECURITY_SCHEME, JWT_SETTINGS } from "../config";
 
 export class AuthService {
-  public static async login(
+  public async login(
     params: ReqAuthLoginT,
   ): Promise<ResAuthLoginT | undefined> {
     const { account, password } = params;
@@ -26,12 +26,13 @@ export class AuthService {
     }
   }
 
-  public static async verify(req: express.Request) {
+  public async verify(req: express.Request) {
     const [SECURITY_SCHEME] = DOC_SECURITY_SCHEME;
+    const cookies = req.cookies as Record<string, string>;
     const authorization =
       SECURITY_SCHEME === "jwt"
         ? req.headers.authorization
-        : req.cookies[SECURITY_SCHEME];
+        : cookies[SECURITY_SCHEME];
     if (!authorization) {
       throwError({ statusCode: 401, message: "No token provided" });
     } else {
@@ -50,7 +51,7 @@ export class AuthService {
     }
   }
 
-  private static async createJwt(user: User) {
+  private async createJwt(user: User) {
     const { issuer, audience, secretOrKey, maxAge } = JWT_SETTINGS;
     const now = Date.now();
     const secret = new TextEncoder().encode(secretOrKey);
@@ -70,7 +71,7 @@ export class AuthService {
     return jwt;
   }
 
-  private static async verifyJwt(token: string) {
+  private async verifyJwt(token: string) {
     try {
       const { secretOrKey } = JWT_SETTINGS;
       const secret = new TextEncoder().encode(secretOrKey);

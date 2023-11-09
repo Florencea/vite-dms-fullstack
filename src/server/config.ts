@@ -83,10 +83,12 @@ export const DOC_DESCRIPTION = readFileSync(
  * OpenAPI Swagger UI Version
  */
 export const DOC_VERSION = `${
-  JSON.parse(
-    readFileSync("package.json", {
-      encoding: "utf-8",
-    }),
+  (
+    JSON.parse(
+      readFileSync("package.json", {
+        encoding: "utf-8",
+      }),
+    ) as { version: string }
   ).version
 }`;
 /**

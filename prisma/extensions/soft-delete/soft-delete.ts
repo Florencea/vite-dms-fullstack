@@ -44,7 +44,8 @@ export const applyExtension = () => {
             typeof model
           >;
           // @ts-expect-error: Requires more types from Prisma
-          return prisma[modelLowerCase].update({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          return await prisma[modelLowerCase].update({
             ...args,
             data: { deletedAt: new Date() },
           });
@@ -54,7 +55,8 @@ export const applyExtension = () => {
             typeof model
           >;
           // @ts-expect-error: Requires more types from Prisma
-          return prisma[modelLowerCase].updateMany({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          return await prisma[modelLowerCase].updateMany({
             ...args,
             data: { deletedAt: new Date() },
           });

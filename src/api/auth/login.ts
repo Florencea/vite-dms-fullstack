@@ -32,7 +32,9 @@ const response =
         data: z.object({}),
       });
 
-type ResAuthLoginJwtT = { token: string };
+interface ResAuthLoginJwtT {
+  token: string;
+}
 type ResAuthLoginCookieT = Record<string, never>;
 export type ResAuthLoginT = ResAuthLoginJwtT | ResAuthLoginCookieT;
 

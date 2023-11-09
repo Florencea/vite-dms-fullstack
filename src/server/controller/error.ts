@@ -3,7 +3,7 @@ import { makeErrorResponse } from "../../api/util";
 
 const errorController: express.ErrorRequestHandler = (err, _, res, next) => {
   if (res.headersSent) {
-    return next(err);
+    next(err);
   }
   const { statusCode, body } = makeErrorResponse(err);
   res.status(statusCode).json(body);

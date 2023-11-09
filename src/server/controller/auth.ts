@@ -12,30 +12,34 @@ const ctx = zodiosContext();
 
 const authController = ctx.router(authApi, { validationErrorHandler });
 
-authController.post("/auth", async (req, res, next) => {
-  try {
-    const data = await AuthService.login(req.body);
-    if (data) {
-      const [SECURITY_SCHEME] = DOC_SECURITY_SCHEME;
-      if (SECURITY_SCHEME === "jwt") {
-        res.json(makeSuccessResponse(data));
+authController.post("/auth", (req, res, next) => {
+  const handler = async () => {
+    try {
+      const authService = new AuthService();
+      const data = await authService.login(req.body);
+      if (data) {
+        const [SECURITY_SCHEME] = DOC_SECURITY_SCHEME;
+        if (SECURITY_SCHEME === "jwt") {
+          res.json(makeSuccessResponse(data));
+        } else {
+          const { maxAge } = JWT_SETTINGS;
+          res
+            .setHeader("Set-Cookie", [
+              `${SECURITY_SCHEME}=${data.token}; HttpOnly; Path=/; Max-Age=${maxAge}; Secure=True;`,
+            ])
+            .json(makeSuccessResponse({}));
+        }
       } else {
-        const { maxAge } = JWT_SETTINGS;
-        res
-          .setHeader("Set-Cookie", [
-            `${SECURITY_SCHEME}=${data.token}; HttpOnly; Path=/; Max-Age=${maxAge}; Secure=True;`,
-          ])
-          .json(makeSuccessResponse({}));
+        throwError({ statusCode: 500, message: "Server Error" });
       }
-    } else {
-      throwError({ statusCode: 500, message: "Server Error" });
+    } catch (err) {
+      next(err);
     }
-  } catch (err) {
-    next(err);
-  }
+  };
+  void handler();
 });
 
-authController.delete("/auth", async (_, res, next) => {
+authController.delete("/auth", (_, res, next) => {
   try {
     const [SECURITY_SCHEME] = DOC_SECURITY_SCHEME;
     if (SECURITY_SCHEME === "jwt") {
