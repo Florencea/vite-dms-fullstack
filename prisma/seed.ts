@@ -1,6 +1,6 @@
 import prisma from ".";
 
-const DEFAULT_USER = {
+const DEFAULT_ADMIN = {
   account: "admin",
   name: "Admin",
   email: "user@example.com",
@@ -17,23 +17,27 @@ const DEFAULT_GROUP = {
 
 const FUNCTIONS = [
   {
-    code: "F000",
+    code: "LOGIN",
     name: "Login to system",
   },
   {
-    code: "F001",
+    code: "USER_READ_LIST",
     name: "Query users",
   },
   {
-    code: "F002",
+    code: "USER_READ",
+    name: "Query user",
+  },
+  {
+    code: "USER_CREATE",
     name: "Create user",
   },
   {
-    code: "F003",
+    code: "USER_UPDATE",
     name: "Update user",
   },
   {
-    code: "F004",
+    code: "USER_DELETE",
     name: "Delete user",
   },
 ];
@@ -97,10 +101,10 @@ async function main() {
   });
   const defaultUser = await prisma.user.upsert({
     where: {
-      account: DEFAULT_USER.account,
+      account: DEFAULT_ADMIN.account,
     },
-    create: { ...DEFAULT_USER },
-    update: { ...DEFAULT_USER },
+    create: { ...DEFAULT_ADMIN },
+    update: { ...DEFAULT_ADMIN },
   });
   await prisma.userGroup.upsert({
     where: {

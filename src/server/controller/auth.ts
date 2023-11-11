@@ -15,7 +15,7 @@ const authController = ctx.router(authApi, { validationErrorHandler });
 authController.post("/auth", (req, res, next) => {
   const handler = async () => {
     try {
-      const authService = new AuthService();
+      const authService = new AuthService([]);
       const data = await authService.login(req.body);
       if (data) {
         const [SECURITY_SCHEME] = DOC_SECURITY_SCHEME;

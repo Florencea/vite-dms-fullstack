@@ -7,7 +7,45 @@ import { ReqAuthLoginT, ResAuthLoginT } from "../../api/auth/login";
 import { throwError } from "../../api/util";
 import { DOC_SECURITY_SCHEME, JWT_SETTINGS } from "../config";
 
+interface UserMetaT {
+  userId: string;
+  isEnabled: { ok: boolean; name: string };
+  isAdmin: boolean;
+  functions: { code: string; name: string }[];
+}
+
 export class AuthService {
+  private ADMIN_GROUP_CODE = "G000";
+  private LOGIN_FUNCTION_CODE = "LOGIN";
+
+  constructor(codes: string[], authorization?: string) {
+    if (codes.length > 0) {
+      if (!authorization) {
+        throwError({ statusCode: 403, message: "Permission Denied" });
+      } else {
+        const userMeta = JSON.parse(authorization) as UserMetaT;
+        if (!userMeta.isAdmin) {
+          const functionSet = new Set(
+            userMeta.functions.map(({ code }) => code),
+          );
+          const codeSet = new Set(codes);
+          const { ok, excluded } = this.isIncludesBy(codeSet, functionSet);
+          if (!ok) {
+            const functionNames = userMeta.functions.filter(({ code }) =>
+              excluded.includes(code),
+            );
+            throwError({
+              statusCode: 403,
+              message: `Permission Denied: ${functionNames
+                .map(({ name }) => name)
+                .join(", ")}`,
+            });
+          }
+        }
+      }
+    }
+  }
+
   public async login(
     params: ReqAuthLoginT,
   ): Promise<ResAuthLoginT | undefined> {
@@ -20,8 +58,16 @@ export class AuthService {
       if (!passwordMatch) {
         throwError({ statusCode: 401, message: "Wrong password" });
       } else {
-        const token = await this.createJwt(user);
-        return { token };
+        const userMeta = await this.getUserMeta(user);
+        if (!userMeta.isEnabled.ok) {
+          throwError({
+            statusCode: 403,
+            message: `Permission Denied: ${userMeta.isEnabled.name}`,
+          });
+        } else {
+          const token = await this.createJwt(user);
+          return { token };
+        }
       }
     }
   }
@@ -45,7 +91,8 @@ export class AuthService {
         if (!user) {
           throwError({ statusCode: 401, message: "User not found" });
         } else {
-          return user.id;
+          const userMeta = await this.getUserMeta(user);
+          return userMeta;
         }
       }
     }
@@ -80,5 +127,58 @@ export class AuthService {
     } catch {
       return undefined;
     }
+  }
+
+  private async getUserMeta(user: User) {
+    const groupPids = await prisma.userGroup.findMany({
+      where: {
+        userPid: user.pid,
+      },
+      select: { groupPid: true },
+    });
+    const functionPids = await prisma.groupFunction.findMany({
+      where: {
+        groupPid: {
+          in: groupPids.map(({ groupPid }) => groupPid),
+        },
+      },
+      select: { functionPid: true },
+    });
+    const functions = await prisma.function.findMany({
+      where: {
+        pid: { in: functionPids.map(({ functionPid }) => functionPid) },
+      },
+      select: { code: true, name: true },
+    });
+    const adminGroup = await prisma.group.findMany({
+      where: {
+        pid: { in: groupPids.map(({ groupPid }) => groupPid) },
+        code: this.ADMIN_GROUP_CODE,
+      },
+    });
+    const loginFunction = await prisma.function.findUnique({
+      where: { code: this.LOGIN_FUNCTION_CODE },
+    });
+    const isAdmin = adminGroup.length === 1;
+    const isEnabled = {
+      ok: functions.some(({ code }) => code === this.LOGIN_FUNCTION_CODE),
+      name: `${loginFunction?.name}`,
+    };
+    const userMeta: UserMetaT = {
+      userId: user.id,
+      isAdmin,
+      isEnabled,
+      functions,
+    };
+    return userMeta;
+  }
+
+  private isIncludesBy<T>(a: Set<T>, b: Set<T>) {
+    const ok = [...a].every((i) => b.has(i));
+    const excluded = [...a].filter((i) => !b.has(i));
+    return {
+      ok,
+      excluded,
+    };
   }
 }

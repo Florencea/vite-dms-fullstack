@@ -5,6 +5,7 @@ import {
   throwError,
   validationErrorHandler,
 } from "../../api/util";
+import { AuthService } from "../services/AuthService";
 import { UserService } from "../services/UserService";
 
 const ctx = zodiosContext();
@@ -12,10 +13,11 @@ const ctx = zodiosContext();
 const userController = ctx.router(userApi, { validationErrorHandler });
 
 userController.post("/user", (req, res, next) => {
+  new AuthService(["USER_CREATE"], req.headers.authorization);
   const handler = async () => {
     try {
-      const userServvice = new UserService();
-      const data = await userServvice.create(req.body);
+      const userService = new UserService();
+      const data = await userService.create(req.body);
       if (data) {
         res.json(makeSuccessResponse(data));
       } else {
@@ -29,10 +31,11 @@ userController.post("/user", (req, res, next) => {
 });
 
 userController.get("/user", (req, res, next) => {
+  new AuthService(["USER_READ_LIST"], req.headers.authorization);
   const handler = async () => {
     try {
-      const userServvice = new UserService();
-      const data = await userServvice.getList(req.query);
+      const userService = new UserService();
+      const data = await userService.getList(req.query);
       res.json(makeSuccessResponse(data));
     } catch (err) {
       next(err);
@@ -42,10 +45,11 @@ userController.get("/user", (req, res, next) => {
 });
 
 userController.get("/user/:id", (req, res, next) => {
+  new AuthService(["USER_READ"], req.headers.authorization);
   const handler = async () => {
     try {
-      const userServvice = new UserService();
-      const data = await userServvice.get(req.params.id);
+      const userService = new UserService();
+      const data = await userService.get(req.params.id);
       if (data) {
         res.json(makeSuccessResponse(data));
       } else {
@@ -59,6 +63,7 @@ userController.get("/user/:id", (req, res, next) => {
 });
 
 userController.patch("/user/:id", (req, res, next) => {
+  new AuthService(["USER_UPDATE"], req.headers.authorization);
   const handler = async () => {
     try {
       const userServvice = new UserService();
@@ -76,10 +81,11 @@ userController.patch("/user/:id", (req, res, next) => {
 });
 
 userController.delete("/user/:id", (req, res, next) => {
+  new AuthService(["USER_DELETE"], req.headers.authorization);
   const handler = async () => {
     try {
-      const userServvice = new UserService();
-      await userServvice.remove(req.params.id);
+      const userService = new UserService();
+      await userService.remove(req.params.id);
       res.json(makeSuccessResponse({}));
     } catch (err) {
       next(err);
