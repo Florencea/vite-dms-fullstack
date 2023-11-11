@@ -7,6 +7,18 @@ datasource db {
   url      = "file:./database.sqlite"
 }
 
+model I18n {
+  pid       Int       @id @default(autoincrement())
+  id        String    @unique @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  code      String    @unique
+  value     String
+  locale    Locale    @relation(fields: [localePid], references: [pid])
+  localePid Int
+}
+
 model User {
   pid       Int       @id @default(autoincrement())
   id        String    @unique @default(uuid())
@@ -19,12 +31,63 @@ model User {
   name      String
   phone     String?
   website   String?
+  group     Group     @relation(fields: [groupPid], references: [pid])
   posts     Post[]
   albums    Album[]
   todos     Todo[]
+  groupPid  Int
+}
+
+model Group {
+  pid       Int        @id @default(autoincrement())
+  id        String     @unique @default(uuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?
+  code      String     @unique
+  name      String
+  editable  Boolean    @default(true)
+  users     User[]
+  functions Function[]
+}
+
+model Function {
+  pid       Int       @id @default(autoincrement())
+  id        String    @unique @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  code      String    @unique
+  name      String
+  group     Group     @relation(fields: [groupPid], references: [pid])
+  groupPid  Int
+}
+
+model Locale {
+  pid              Int                @id @default(autoincrement())
+  id               String             @unique @default(uuid())
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  deletedAt        DateTime?
+  code             String             @unique
+  name             String
+  Post_Translation Post_Translation[]
+  I18n             I18n[]
 }
 
 model Post {
+  pid              Int                @id @default(autoincrement())
+  id               String             @unique @default(uuid())
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  deletedAt        DateTime?
+  user             User               @relation(fields: [userpId], references: [pid])
+  userpId          Int
+  comments         Comment[]
+  Post_Translation Post_Translation[]
+}
+
+model Post_Translation {
   pid       Int       @id @default(autoincrement())
   id        String    @unique @default(uuid())
   createdAt DateTime  @default(now())
@@ -32,9 +95,10 @@ model Post {
   deletedAt DateTime?
   title     String
   body      String?
-  user      User      @relation(fields: [userId], references: [pid])
-  userId    Int
-  comments  Comment[]
+  post      Post      @relation(fields: [postPid], references: [pid])
+  postPid   Int
+  locale    Locale    @relation(fields: [localePid], references: [pid])
+  localePid Int
 }
 
 model Comment {
@@ -46,8 +110,8 @@ model Comment {
   name      String
   email     String
   body      String?
-  postId    Int
-  post      Post      @relation(fields: [postId], references: [pid])
+  postpId   Int
+  post      Post      @relation(fields: [postpId], references: [pid])
 }
 
 model Album {
@@ -57,8 +121,8 @@ model Album {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   title     String
-  userId    Int
-  user      User      @relation(fields: [userId], references: [pid])
+  userpId   Int
+  user      User      @relation(fields: [userpId], references: [pid])
   photos    Photo[]
 }
 
@@ -69,8 +133,8 @@ model Photo {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   url       String
-  albumId   Int
-  albums    Album     @relation(fields: [albumId], references: [pid])
+  albumpId  Int
+  albums    Album     @relation(fields: [albumpId], references: [pid])
 }
 
 model Todo {
@@ -81,6 +145,6 @@ model Todo {
   deletedAt DateTime?
   title     String
   completed Boolean
-  userId    Int
-  user      User      @relation(fields: [userId], references: [pid])
+  userpId   Int
+  user      User      @relation(fields: [userpId], references: [pid])
 }
