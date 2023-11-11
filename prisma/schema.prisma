@@ -13,12 +13,14 @@ model I18n {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
-  code        String    @unique
+  code        String
   value       String
   locale      Locale    @relation(fields: [localePid], references: [pid])
   localePid   Int
   function    Function  @relation(fields: [functionPid], references: [pid])
   functionPid Int
+
+  @@unique([code, localePid])
 }
 
 model User {

@@ -38,6 +38,55 @@ const FUNCTIONS = [
   },
 ];
 
+const LOCALES = [
+  {
+    code: "zh-TW",
+    name: "繁體中文",
+  },
+  {
+    code: "en-US",
+    name: "English",
+  },
+];
+
+const I18N_ZHTW_F000 = [
+  {
+    code: "LF000_00001",
+    value: "登入",
+  },
+  {
+    code: "LF000_00002",
+    value: "帳號",
+  },
+  {
+    code: "LF000_00003",
+    value: "密碼",
+  },
+  {
+    code: "LF000_00004",
+    value: "送出",
+  },
+];
+
+const I18N_ENUS_F000 = [
+  {
+    code: "LF000_00001",
+    value: "Login",
+  },
+  {
+    code: "LF000_00002",
+    value: "Account",
+  },
+  {
+    code: "LF000_00003",
+    value: "Password",
+  },
+  {
+    code: "LF000_00004",
+    value: "Submit",
+  },
+];
+
 async function main() {
   const defaultGroup = await prisma.group.upsert({
     where: {
@@ -94,6 +143,49 @@ async function main() {
           functionPid: ff.pid,
         },
       });
+      await Promise.all(
+        LOCALES.map(async (l) => {
+          const ll = await prisma.locale.upsert({
+            where: {
+              code: l.code,
+            },
+            create: l,
+            update: l,
+          });
+          if (ll.code === "zh-TW") {
+            await Promise.all(
+              I18N_ZHTW_F000.map(async (i) => {
+                await prisma.i18n.upsert({
+                  where: {
+                    code_localePid: {
+                      code: i.code,
+                      localePid: ll.pid,
+                    },
+                  },
+                  create: { ...i, localePid: ll.pid, functionPid: ff.pid },
+                  update: { ...i, localePid: ll.pid, functionPid: ff.pid },
+                });
+              }),
+            );
+          }
+          if (ll.code === "en-US") {
+            await Promise.all(
+              I18N_ENUS_F000.map(async (i) => {
+                await prisma.i18n.upsert({
+                  where: {
+                    code_localePid: {
+                      code: i.code,
+                      localePid: ll.pid,
+                    },
+                  },
+                  create: { ...i, localePid: ll.pid, functionPid: ff.pid },
+                  update: { ...i, localePid: ll.pid, functionPid: ff.pid },
+                });
+              }),
+            );
+          }
+        }),
+      );
     }),
   );
 }
