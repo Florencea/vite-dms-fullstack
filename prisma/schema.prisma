@@ -8,59 +8,88 @@ datasource db {
 }
 
 model I18n {
-  pid       Int       @id @default(autoincrement())
-  id        String    @unique @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  code      String    @unique
-  value     String
-  locale    Locale    @relation(fields: [localePid], references: [pid])
-  localePid Int
+  pid         Int       @id @default(autoincrement())
+  id          String    @unique @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  code        String    @unique
+  value       String
+  locale      Locale    @relation(fields: [localePid], references: [pid])
+  localePid   Int
+  function    Function  @relation(fields: [functionPid], references: [pid])
+  functionPid Int
 }
 
 model User {
+  pid        Int         @id @default(autoincrement())
+  id         String      @unique @default(uuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  deletedAt  DateTime?
+  account    String      @unique
+  password   String
+  email      String      @unique
+  name       String
+  phone      String?
+  website    String?
+  posts      Post[]
+  albums     Album[]
+  todos      Todo[]
+  UserGroups UserGroup[]
+}
+
+model UserGroup {
   pid       Int       @id @default(autoincrement())
   id        String    @unique @default(uuid())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  account   String    @unique
-  password  String
-  email     String    @unique
-  name      String
-  phone     String?
-  website   String?
+  user      User      @relation(fields: [userPid], references: [pid])
+  userPid   Int
   group     Group     @relation(fields: [groupPid], references: [pid])
-  posts     Post[]
-  albums    Album[]
-  todos     Todo[]
   groupPid  Int
+
+  @@unique([userPid, groupPid])
 }
 
 model Group {
-  pid       Int        @id @default(autoincrement())
-  id        String     @unique @default(uuid())
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  deletedAt DateTime?
-  code      String     @unique
-  name      String
-  editable  Boolean    @default(true)
-  users     User[]
-  functions Function[]
+  pid           Int             @id @default(autoincrement())
+  id            String          @unique @default(uuid())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  deletedAt     DateTime?
+  code          String          @unique
+  name          String
+  editable      Boolean         @default(true)
+  UserGroups    UserGroup[]
+  GroupFunction GroupFunction[]
+}
+
+model GroupFunction {
+  pid         Int       @id @default(autoincrement())
+  id          String    @unique @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  group       Group     @relation(fields: [groupPid], references: [pid])
+  groupPid    Int
+  function    Function  @relation(fields: [functionPid], references: [pid])
+  functionPid Int
+
+  @@unique([groupPid, functionPid])
 }
 
 model Function {
-  pid       Int       @id @default(autoincrement())
-  id        String    @unique @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  code      String    @unique
-  name      String
-  group     Group     @relation(fields: [groupPid], references: [pid])
-  groupPid  Int
+  pid           Int             @id @default(autoincrement())
+  id            String          @unique @default(uuid())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  deletedAt     DateTime?
+  code          String          @unique
+  name          String
+  GroupFunction GroupFunction[]
+  I18n          I18n[]
 }
 
 model Locale {

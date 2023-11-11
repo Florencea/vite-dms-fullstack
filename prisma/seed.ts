@@ -15,6 +15,29 @@ const DEFAULT_GROUP = {
   editable: false,
 };
 
+const FUNCTIONS = [
+  {
+    code: "F000",
+    name: "Login to system",
+  },
+  {
+    code: "F001",
+    name: "Query users",
+  },
+  {
+    code: "F002",
+    name: "Create user",
+  },
+  {
+    code: "F003",
+    name: "Update user",
+  },
+  {
+    code: "F004",
+    name: "Delete user",
+  },
+];
+
 async function main() {
   const defaultGroup = await prisma.group.upsert({
     where: {
@@ -23,13 +46,56 @@ async function main() {
     create: DEFAULT_GROUP,
     update: DEFAULT_GROUP,
   });
-  await prisma.user.upsert({
+  const defaultUser = await prisma.user.upsert({
     where: {
       account: DEFAULT_USER.account,
     },
-    create: { ...DEFAULT_USER, groupPid: defaultGroup.pid },
-    update: { ...DEFAULT_USER, groupPid: defaultGroup.pid },
+    create: { ...DEFAULT_USER },
+    update: { ...DEFAULT_USER },
   });
+  await prisma.userGroup.upsert({
+    where: {
+      userPid_groupPid: {
+        userPid: defaultUser.pid,
+        groupPid: defaultGroup.pid,
+      },
+    },
+    create: {
+      userPid: defaultUser.pid,
+      groupPid: defaultGroup.pid,
+    },
+    update: {
+      userPid: defaultUser.pid,
+      groupPid: defaultGroup.pid,
+    },
+  });
+  await Promise.all(
+    FUNCTIONS.map(async (f) => {
+      const ff = await prisma.function.upsert({
+        where: {
+          code: f.code,
+        },
+        create: f,
+        update: f,
+      });
+      await prisma.groupFunction.upsert({
+        where: {
+          groupPid_functionPid: {
+            groupPid: defaultGroup.pid,
+            functionPid: ff.pid,
+          },
+        },
+        create: {
+          groupPid: defaultGroup.pid,
+          functionPid: ff.pid,
+        },
+        update: {
+          groupPid: defaultGroup.pid,
+          functionPid: ff.pid,
+        },
+      });
+    }),
+  );
 }
 main()
   .then(async () => {
