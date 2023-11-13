@@ -1,14 +1,16 @@
 {
-  "version": "0.0.0",
+  "name": "vite-dms-fullstack",
+  "version": "1.0.0",
+  "type": "commonjs",
   "private": true,
   "scripts": {
     "dev": "dotenv -e .env -e .env.local nodemon src/server/app.ts",
     "build": "dotenv -e .env -e .env.local vite build",
     "start": "NODE_ENV=production dotenv -e .env -e .env.local tsx src/server/app.ts",
-    "lint": "eslint --ext ts,tsx . && tsc",
+    "lint": "eslint --ext js,mjs.cjs,jsx,ts,tsx . && tsc",
     "format": "prettier '**/*' --write --ignore-unknown --cache",
-    "migrate": "npx prisma migrate dev --name init && npx prisma db seed",
-    "studio": "npx prisma studio"
+    "migrate": "prisma migrate dev --name init",
+    "studio": "prisma studio"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.17.2",
@@ -67,7 +69,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
     "nodemon": "^3.0.1",
-    "prettier": "^3.0.3"
+    "prettier": "^3.1.0"
   },
   "prisma": {
     "seed": "dotenv tsx prisma/seed.ts"
