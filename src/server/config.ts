@@ -2,7 +2,7 @@ import { apiKeyAuthScheme, bearerAuthScheme } from "@zodios/openapi";
 import chalk from "chalk";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { exit } from "node:process";
+import { cwd, exit } from "node:process";
 
 /**
  * Is Server in production
@@ -63,7 +63,13 @@ export const DOC_STATIC_ROUTE = join(DOC_ROUTE, "assets");
 /**
  * OpenAPI static file path
  */
-export const DOC_STATIC_PATH = join(__dirname, "openapi", "assets");
+export const DOC_STATIC_PATH = join(
+  cwd(),
+  "src",
+  "server",
+  "openapi",
+  "assets",
+);
 /**
  * OpenAPI Swagger UI title
  */
@@ -74,7 +80,7 @@ export const DOC_TITLE = process.env.VITE_TITLE
  * OpenAPI Swagger UI Description
  */
 export const DOC_DESCRIPTION = readFileSync(
-  join(__dirname, "openapi", "description.md"),
+  join(cwd(), "src", "server", "openapi", "description.md"),
   {
     encoding: "utf-8",
   },
