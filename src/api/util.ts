@@ -1,6 +1,5 @@
 import { makeErrors } from "@zodios/core";
 import express from "express";
-import { get } from "radash";
 import { ZodIssue, z } from "zod";
 
 interface ZErrorT {
@@ -68,22 +67,26 @@ export const makeSuccessResponse = <T extends object>(
 };
 
 export const makeErrorResponse = (err: unknown) => {
-  const errName = get<string>(err, "name", "Error");
-  if (errName === "ZError") {
-    return get<{
-      statusCode: number;
-      body: { message: string; timestamp: Date; data: Record<string, unknown> };
-    }>(err, "zError");
-  } else {
+  if (err instanceof ZError) {
+    return err.zError;
+  } else if (err instanceof Error) {
     const validationErrorNames = ["PrismaClientKnownRequestError"];
-    const statusCode = validationErrorNames.includes(errName) ? 400 : 500;
-    const errMessageFull = get<string>(err, "message", "Server error");
-    const errMessage = errMessageFull.split("\n").at(-1) ?? "Server error";
-    const message = `${errName}: ${errMessage}`;
+    const statusCode = validationErrorNames.includes(err.name) ? 400 : 500;
+    const errMessage = err.message.split("\n").at(-1) ?? "Server error";
+    const message = `${err.name}: ${errMessage}`;
     return {
       statusCode,
       body: {
         message,
+        timestamp: new Date(),
+        data: {},
+      },
+    };
+  } else {
+    return {
+      statusCode: 500,
+      body: {
+        message: "Server error",
         timestamp: new Date(),
         data: {},
       },
