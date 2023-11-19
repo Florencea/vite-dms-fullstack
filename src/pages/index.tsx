@@ -1,4 +1,4 @@
-import { SITE_LOGO } from "../constants/assets";
+import { SITE_LOGO } from "../constants";
 
 export default function Index() {
   return (

@@ -7,7 +7,7 @@ import {
   Tag,
   version,
 } from "antd";
-import { SITE_LOGO } from "../../constants/assets";
+import { SITE_LOGO } from "../../constants";
 
 export default function Index() {
   const { message } = App.useApp();

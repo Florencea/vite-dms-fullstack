@@ -9,8 +9,8 @@ import {
   RouterProvider,
   createBrowserRouter,
 } from "react-router-dom";
-import "./styles/main.css";
-import { theme } from "./styles/theme";
+import "tailwindcss/tailwind.css";
+import { theme } from "./theme";
 
 interface Props {
   container: HTMLDivElement;

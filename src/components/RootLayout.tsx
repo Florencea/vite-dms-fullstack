@@ -4,9 +4,9 @@ import { MenuItemType } from "antd/es/menu/hooks/useItems";
 import { ReactNode, useEffect } from "react";
 import { Title } from "react-head";
 import { Outlet, useLocation } from "react-router-dom";
-import { SITE_LOGO } from "../constants/assets";
+import { SITE_LOGO } from "../constants";
 import { Path, useNavigate } from "../router";
-import { MENU_WIDTH, NAV_HEIGHT } from "../styles/theme";
+import { MENU_WIDTH, NAV_HEIGHT } from "../theme";
 
 const { Header, Content, Sider } = Layout;
 
