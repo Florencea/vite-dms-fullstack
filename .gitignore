@@ -26,6 +26,9 @@ dist-ssr
 # env
 .env
 
+# generouted
+router.ts
+
 # prisma
 /prisma/*
 !/prisma/*.prisma
