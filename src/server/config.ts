@@ -25,6 +25,16 @@ export const PORT = parseInt(process.env.PORT ?? "3000", 10);
  */
 export const BASE = process.env.VITE_WEB_BASE ?? "/";
 /**
+ * Client output directory for Deployment
+ *
+ * from: `env.VITE_OUTDIR` + `/client`
+ *
+ * default: `dist/client`
+ */
+export const OUTDIR = process.env.VITE_OUTDIR
+  ? join(process.env.VITE_OUTDIR, "client")
+  : "dist/client";
+/**
  * Server favicon
  *
  * from: `env.VITE_FAVICON`
@@ -63,13 +73,9 @@ export const DOC_STATIC_ROUTE = join(DOC_ROUTE, "assets");
 /**
  * OpenAPI static file path
  */
-export const DOC_STATIC_PATH = join(
-  cwd(),
-  "src",
-  "server",
-  "openapi",
-  "assets",
-);
+export const DOC_STATIC_PATH = IS_PRODCTION
+  ? join(OUTDIR, "swaggerui")
+  : join(cwd(), "public", "swaggerui");
 /**
  * OpenAPI Swagger UI title
  */
@@ -80,7 +86,9 @@ export const DOC_TITLE = process.env.VITE_TITLE
  * OpenAPI Swagger UI Description
  */
 export const DOC_DESCRIPTION = readFileSync(
-  join(cwd(), "src", "server", "openapi", "description.md"),
+  IS_PRODCTION
+    ? join(OUTDIR, "swaggerui", "description.md")
+    : join(cwd(), "public", "swaggerui", "description.md"),
   {
     encoding: "utf-8",
   },

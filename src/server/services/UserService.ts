@@ -1,4 +1,4 @@
-import prisma from "../../../prisma";
+import { prisma } from "../../../prisma";
 import { ReqUserCreateT, ResUserCreateT } from "../../api/user/create";
 import { ResUserGetT } from "../../api/user/get";
 import { ReqUserGetListT, ResUserGetListT } from "../../api/user/getList";

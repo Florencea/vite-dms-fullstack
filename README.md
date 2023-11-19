@@ -7,11 +7,13 @@
 
 ## Usage
 
-- Set `JWT_SECRET` in `.env.local` file.
+- Set up `.env` file (from `.env.example`).
 - Development: `npm run dev`
 - Build: `npm run build`
 - Prodction: `npm start`
-- Database migrate: `npm run migrate`
+- Database initialize in development: `npm run db:dev:init`
+- Database GUI in development: `npm run db:dev:studio`
+- Database migrate in production: `npm run db:prod:migrate`
 
 ## Feature
 

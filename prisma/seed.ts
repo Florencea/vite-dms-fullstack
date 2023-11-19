@@ -1,4 +1,4 @@
-import prisma from ".";
+import { prisma } from ".";
 
 const DEFAULT_ADMIN = {
   account: "admin",

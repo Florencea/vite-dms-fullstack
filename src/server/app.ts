@@ -4,15 +4,18 @@ import cookieParser from "cookie-parser";
 import { Express, static as eStatic } from "express";
 import helmet from "helmet";
 import logger from "morgan";
+import { cwd } from "node:process";
 import { serve, setup } from "swagger-ui-express";
 import ViteExpress from "vite-express";
 import {
   API_PREFIX,
+  BASE,
   DOC_ROUTE,
   DOC_STATIC_PATH,
   DOC_STATIC_ROUTE,
   DOC_TYPEGEN_ROUTE,
   IS_PRODCTION,
+  OUTDIR,
   PORT,
   SERVER_READY_MESSAGE,
 } from "./config";
@@ -37,6 +40,16 @@ app.use(compression());
  */
 if (IS_PRODCTION) {
   app.use(helmet());
+  /**
+   * Config for viteless production mode
+   */
+  ViteExpress.config({
+    inlineViteConfig: {
+      root: cwd(),
+      base: BASE,
+      build: { outDir: OUTDIR },
+    },
+  });
 }
 
 /**

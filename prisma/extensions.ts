@@ -1,8 +1,9 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import argon2 from "argon2";
 
 const prisma = new PrismaClient();
 
-export const applyExtension = () => {
+export const softDeleteExtesion = () => {
   return Prisma.defineExtension({
     name: "soft-delete",
     query: {
@@ -60,6 +61,33 @@ export const applyExtension = () => {
             ...args,
             data: { deletedAt: new Date() },
           });
+        },
+      },
+    },
+  });
+};
+
+export const userCreateExtesion = () => {
+  return Prisma.defineExtension({
+    name: "user-create",
+    query: {
+      user: {
+        create: async ({ args, query }) => {
+          const password = await argon2.hash(args.data.password);
+          args.data = { ...args.data, password };
+          return query(args);
+        },
+        upsert: async ({ args, query }) => {
+          const password = await argon2.hash(args.create.password);
+          args.create = {
+            ...args.create,
+            password,
+          };
+          args.update = {
+            ...args.update,
+            password,
+          };
+          return query(args);
         },
       },
     },
