@@ -1,6 +1,6 @@
 import { openApiBuilder } from "@zodios/openapi";
 import { join } from "node:path";
-import { SwaggerUiOptions } from "swagger-ui-express";
+import type { SwaggerUiOptions } from "swagger-ui-express";
 import authApi from "../api/auth";
 import userApi from "../api/user";
 import {

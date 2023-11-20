@@ -1,6 +1,6 @@
 import { makeErrors } from "@zodios/core";
-import express from "express";
-import { ZodIssue, z } from "zod";
+import type { NextFunction, Request, Response } from "express";
+import { z, type ZodIssue, type ZodObject, type ZodTypeAny } from "zod";
 
 interface ZErrorT {
   name: string;
@@ -26,8 +26,8 @@ class ZError extends Error {
   }
 }
 
-export const makeZResponse = <T extends Record<string, z.ZodTypeAny>>(params: {
-  data: z.ZodObject<T>;
+export const makeZResponse = <T extends Record<string, ZodTypeAny>>(params: {
+  data: ZodObject<T>;
 }) => {
   const { data } = params;
   return z
@@ -99,10 +99,10 @@ export const validationErrorHandler = (
     context: string;
     error: ZodIssue[];
   },
-  _: express.Request,
-  res: express.Response,
+  _: Request,
+  res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  __: express.NextFunction,
+  __: NextFunction,
 ) => {
   try {
     const message = err.error

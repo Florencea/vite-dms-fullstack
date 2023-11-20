@@ -1,9 +1,9 @@
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import argon2 from "argon2";
-import express from "express";
+import type express from "express";
 import * as jose from "jose";
 import { prisma } from "../../../prisma";
-import { ReqAuthLoginT, ResAuthLoginT } from "../../api/auth/login";
+import type { ReqAuthLoginT, ResAuthLoginT } from "../../api/auth/login";
 import { throwError } from "../../api/util";
 import { DOC_SECURITY_SCHEME, JWT_SETTINGS } from "../config";
 

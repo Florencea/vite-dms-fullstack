@@ -1,8 +1,8 @@
 import { prisma } from "../../../prisma";
-import { ReqUserCreateT, ResUserCreateT } from "../../api/user/create";
-import { ResUserGetT } from "../../api/user/get";
-import { ReqUserGetListT, ResUserGetListT } from "../../api/user/getList";
-import { ReqUserUpdateT, ResUserUpdateT } from "../../api/user/update";
+import type { ReqUserCreateT, ResUserCreateT } from "../../api/user/create";
+import type { ResUserGetT } from "../../api/user/get";
+import type { ReqUserGetListT, ResUserGetListT } from "../../api/user/getList";
+import type { ReqUserUpdateT, ResUserUpdateT } from "../../api/user/update";
 import { throwError } from "../../api/util";
 
 export class UserService {

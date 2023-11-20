@@ -1,7 +1,7 @@
-import express from "express";
+import type { ErrorRequestHandler } from "express";
 import { makeErrorResponse } from "../../api/util";
 
-const errorController: express.ErrorRequestHandler = (err, _, res, next) => {
+const errorController: ErrorRequestHandler = (err, _, res, next) => {
   if (res.headersSent) {
     next(err);
   }

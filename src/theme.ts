@@ -1,4 +1,4 @@
-import { ThemeConfig, theme as antTheme } from "antd";
+import { theme as antTheme, type ThemeConfig } from "antd";
 
 const { getDesignToken } = antTheme;
 

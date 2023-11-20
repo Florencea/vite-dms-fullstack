@@ -1,8 +1,8 @@
-import express from "express";
+import type { RequestHandler } from "express";
 import { throwError } from "../../api/util";
 import { AuthService } from "../services/AuthService";
 
-const securityHandler: express.RequestHandler = (req, res, next) => {
+const securityHandler: RequestHandler = (req, res, next) => {
   const handler = async () => {
     try {
       if (res.headersSent) {

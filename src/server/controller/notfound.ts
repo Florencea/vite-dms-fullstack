@@ -1,7 +1,7 @@
-import express from "express";
+import type { RequestHandler } from "express";
 import { throwError } from "../../api/util";
 
-const notfoundController: express.RequestHandler = (req, res, next) => {
+const notfoundController: RequestHandler = (req, res, next) => {
   try {
     if (res.headersSent) {
       next();

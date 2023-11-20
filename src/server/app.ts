@@ -1,7 +1,7 @@
 import { zodiosApp } from "@zodios/express";
 import compression from "compression";
 import cookieParser from "cookie-parser";
-import { Express, static as eStatic } from "express";
+import { static as eStatic, type Express } from "express";
 import helmet from "helmet";
 import logger from "morgan";
 import { cwd } from "node:process";

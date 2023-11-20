@@ -1,9 +1,9 @@
 import { Router } from "express";
 import {
   InputData,
-  Options,
   jsonInputForTargetLanguage,
   quicktype,
+  type Options,
 } from "quicktype-core";
 
 const typegenController = Router();

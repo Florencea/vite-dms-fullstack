@@ -1,11 +1,11 @@
 import { BookOutlined, CameraOutlined } from "@ant-design/icons";
 import { Layout, Menu, theme } from "antd";
-import { MenuItemType } from "antd/es/menu/hooks/useItems";
-import { ReactNode, useEffect } from "react";
+import type { MenuItemType } from "antd/es/menu/hooks/useItems";
+import { useEffect, type ReactNode } from "react";
 import { Title } from "react-head";
 import { Outlet, useLocation } from "react-router-dom";
 import { SITE_LOGO } from "../constants";
-import { Path, useNavigate } from "../router";
+import { useNavigate, type Path } from "../router";
 import { MENU_WIDTH, NAV_HEIGHT } from "../theme";
 
 const { Header, Content, Sider } = Layout;

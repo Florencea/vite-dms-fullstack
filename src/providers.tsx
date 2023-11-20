@@ -5,9 +5,9 @@ import "dayjs/locale/zh-tw";
 import { StrictMode } from "react";
 import { HeadProvider } from "react-head";
 import {
-  RouteObject,
   RouterProvider,
   createBrowserRouter,
+  type RouteObject,
 } from "react-router-dom";
 import "tailwindcss/tailwind.css";
 import { theme } from "./theme";
