@@ -11,6 +11,10 @@
   --theme-csharp-color: #512bd4;
 }
 
+body {
+  font-feature-settings: "calt", "dlig", "ss01", "cv05", "cv08", "tnum", "opsz";
+}
+
 .swagger-ui .copy-btn-path {
   top: 0;
   right: 0;
