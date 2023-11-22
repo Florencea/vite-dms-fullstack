@@ -1,14 +1,19 @@
 import { zodiosContext } from "@zodios/express";
-import authApi from "../../api/auth";
+import { authApiProtected, authApiPublic } from "../../api/auth";
 import { throwError, validationErrorHandler } from "../../api/util";
 import { DOC_SECURITY_SCHEME, JWT_SETTINGS } from "../config";
 import { AuthService } from "../services/AuthService";
 
 const ctx = zodiosContext();
 
-const authController = ctx.router(authApi, { validationErrorHandler });
+export const authControllerPublic = ctx.router(authApiPublic, {
+  validationErrorHandler,
+});
+export const authControllerProtected = ctx.router(authApiProtected, {
+  validationErrorHandler,
+});
 
-authController.post("/auth", (req, res, next) => {
+authControllerPublic.post("/auth", (req, res, next) => {
   const handler = async () => {
     try {
       const authService = new AuthService();
@@ -35,7 +40,7 @@ authController.post("/auth", (req, res, next) => {
   void handler();
 });
 
-authController.delete("/auth", (_, res, next) => {
+authControllerPublic.delete("/auth", (_, res, next) => {
   try {
     const [SECURITY_SCHEME] = DOC_SECURITY_SCHEME;
     if (SECURITY_SCHEME === "jwt") {
@@ -53,4 +58,14 @@ authController.delete("/auth", (_, res, next) => {
   }
 });
 
-export default authController;
+authControllerProtected.get("/auth", (req, res, next) => {
+  const authService = new AuthService(req.headers.authorization);
+  authService.authenticate([], () => {
+    try {
+      const data = authService.getUserFunctions();
+      res.json(data);
+    } catch (err) {
+      next(err);
+    }
+  });
+});

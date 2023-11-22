@@ -1,7 +1,7 @@
 import { openApiBuilder } from "@zodios/openapi";
 import { join } from "node:path";
 import type { SwaggerUiOptions } from "swagger-ui-express";
-import authApi from "../api/auth";
+import { authApiProtected, authApiPublic } from "../api/auth";
 import usersApi from "../api/users";
 import {
   API_PREFIX,
@@ -29,10 +29,11 @@ export const openApiDocument = openApiBuilder({
   /**
    * public api below
    */
-  .addPublicApi(authApi)
+  .addPublicApi(authApiPublic)
   /**
    * protected api below
    */
+  .addProtectedApi(security, authApiProtected)
   .addProtectedApi(security, usersApi)
   .build();
 

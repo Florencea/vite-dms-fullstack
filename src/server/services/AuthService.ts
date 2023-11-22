@@ -26,7 +26,10 @@ export class AuthService {
     }
   }
 
-  public authenticate(codes: string[], handler: () => Promise<void>) {
+  public authenticate(
+    codes: string[],
+    handler: (() => Promise<void>) | (() => void),
+  ) {
     if (!this.userMeta) {
       throwError({
         statusCode: 401,
@@ -82,6 +85,14 @@ export class AuthService {
     }
   }
 
+  public getUserFunctions() {
+    if (this.userMeta) {
+      return this.userMeta.functions.map(({ code }) => code);
+    } else {
+      return [];
+    }
+  }
+
   public async verify(req: express.Request) {
     const [SECURITY_SCHEME] = DOC_SECURITY_SCHEME;
     const cookies = req.cookies as Record<string, string>;
@@ -90,7 +101,7 @@ export class AuthService {
         ? req.headers.authorization
         : cookies[SECURITY_SCHEME];
     if (!authorization) {
-      throwError({ statusCode: 401, statusMessage: "No token provided" });
+      throwError({ statusCode: 401, statusMessage: "Unauthorized" });
     } else {
       const token = authorization.replace("Bearer ", "");
       const id = await this.verifyJwt(token);
