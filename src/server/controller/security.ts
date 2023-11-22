@@ -8,7 +8,7 @@ const securityHandler: RequestHandler = (req, res, next) => {
       if (res.headersSent) {
         next();
       }
-      const authService = new AuthService([]);
+      const authService = new AuthService();
       const userMeta = await authService.verify(req);
       if (!userMeta) {
         throwError({ statusCode: 401, message: "No token provided" });

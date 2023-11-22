@@ -17,31 +17,40 @@ interface UserMetaT {
 export class AuthService {
   private ADMIN_GROUP_CODE = "G000";
   private LOGIN_FUNCTION_CODE = "LOGIN";
+  private userMeta?: UserMetaT;
 
-  constructor(codes: string[], authorization?: string) {
-    if (codes.length > 0) {
-      if (!authorization) {
-        throwError({ statusCode: 403, message: "Permission Denied" });
-      } else {
-        const userMeta = JSON.parse(authorization) as UserMetaT;
-        if (!userMeta.isAdmin) {
-          const functionSet = new Set(
-            userMeta.functions.map(({ code }) => code),
+  constructor(authorization?: string) {
+    if (authorization) {
+      const userMeta = JSON.parse(authorization) as UserMetaT;
+      this.userMeta = userMeta;
+    }
+  }
+
+  public authenticate(codes: string[], handler: () => Promise<void>) {
+    if (!this.userMeta) {
+      throwError({ statusCode: 401, message: "No authorization provided" });
+    } else {
+      if (!this.userMeta.isAdmin) {
+        const functionSet = new Set(
+          this.userMeta.functions.map(({ code }) => code),
+        );
+        const codeSet = new Set(codes);
+        const { ok, excluded } = this.isIncludesBy(codeSet, functionSet);
+        if (!ok) {
+          const functionNames = this.userMeta.functions.filter(({ code }) =>
+            excluded.includes(code),
           );
-          const codeSet = new Set(codes);
-          const { ok, excluded } = this.isIncludesBy(codeSet, functionSet);
-          if (!ok) {
-            const functionNames = userMeta.functions.filter(({ code }) =>
-              excluded.includes(code),
-            );
-            throwError({
-              statusCode: 403,
-              message: `Permission Denied: ${functionNames
-                .map(({ name }) => name)
-                .join(", ")}`,
-            });
-          }
+          throwError({
+            statusCode: 403,
+            message: `Permission Denied: ${functionNames
+              .map(({ name }) => name)
+              .join(", ")}`,
+          });
+        } else {
+          void handler();
         }
+      } else {
+        void handler();
       }
     }
   }

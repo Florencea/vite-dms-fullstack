@@ -9,8 +9,8 @@ const ctx = zodiosContext();
 const usersController = ctx.router(usersApi, { validationErrorHandler });
 
 usersController.post("/users", (req, res, next) => {
-  new AuthService(["USER_CREATE"], req.headers.authorization);
-  const handler = async () => {
+  const authService = new AuthService(req.headers.authorization);
+  authService.authenticate(["USER_CREATE"], async () => {
     try {
       const userService = new UserService();
       await userService.create(req.body);
@@ -18,13 +18,12 @@ usersController.post("/users", (req, res, next) => {
     } catch (err) {
       next(err);
     }
-  };
-  void handler();
+  });
 });
 
 usersController.get("/users", (req, res, next) => {
-  new AuthService(["USER_READ_LIST"], req.headers.authorization);
-  const handler = async () => {
+  const authService = new AuthService(req.headers.authorization);
+  authService.authenticate(["USER_READ_LIST"], async () => {
     try {
       const userService = new UserService();
       const data = await userService.getList(req.query);
@@ -32,13 +31,12 @@ usersController.get("/users", (req, res, next) => {
     } catch (err) {
       next(err);
     }
-  };
-  void handler();
+  });
 });
 
 usersController.get("/users/:id", (req, res, next) => {
-  new AuthService(["USER_READ"], req.headers.authorization);
-  const handler = async () => {
+  const authService = new AuthService(req.headers.authorization);
+  authService.authenticate(["USER_READ"], async () => {
     try {
       const userService = new UserService();
       const data = await userService.get(req.params.id);
@@ -46,13 +44,12 @@ usersController.get("/users/:id", (req, res, next) => {
     } catch (err) {
       next(err);
     }
-  };
-  void handler();
+  });
 });
 
 usersController.put("/users/:id", (req, res, next) => {
-  new AuthService(["USER_UPDATE"], req.headers.authorization);
-  const handler = async () => {
+  const authService = new AuthService(req.headers.authorization);
+  authService.authenticate(["USER_UPDATE"], async () => {
     try {
       const userServvice = new UserService();
       await userServvice.update(req.params.id, req.body);
@@ -60,13 +57,12 @@ usersController.put("/users/:id", (req, res, next) => {
     } catch (err) {
       next(err);
     }
-  };
-  void handler();
+  });
 });
 
 usersController.delete("/users/:id", (req, res, next) => {
-  new AuthService(["USER_DELETE"], req.headers.authorization);
-  const handler = async () => {
+  const authService = new AuthService(req.headers.authorization);
+  authService.authenticate(["USER_UPDATE"], async () => {
     try {
       const userService = new UserService();
       await userService.remove(req.params.id);
@@ -74,8 +70,7 @@ usersController.delete("/users/:id", (req, res, next) => {
     } catch (err) {
       next(err);
     }
-  };
-  void handler();
+  });
 });
 
 export default usersController;
