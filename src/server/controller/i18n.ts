@@ -1,8 +1,8 @@
 import { zodiosContext } from "@zodios/express";
 import { i18nApiProtected, i18nApiPublic } from "../../api/i18n";
-import { validationErrorHandler } from "../../api/util";
 import { AuthService } from "../services/AuthService";
 import { I18nService } from "../services/I18nService";
+import { validationErrorHandler } from "./error";
 
 const ctx = zodiosContext();
 

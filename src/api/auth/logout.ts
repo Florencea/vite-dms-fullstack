@@ -1,6 +1,6 @@
 import { makeEndpoint, makeParameters } from "@zodios/core";
 import { z } from "zod";
-import { errors } from "../util";
+import { errors } from "../error";
 
 const parameters = makeParameters([
   {

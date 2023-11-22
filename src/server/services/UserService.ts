@@ -5,7 +5,7 @@ import type {
   ResUsersGetListT,
 } from "../../api/users/getList";
 import type { ReqUsersUpdateT } from "../../api/users/update";
-import { throwError } from "../../api/util";
+import { throwZError } from "../controller/error";
 import { I18nService } from "./I18nService";
 
 export class UserService {
@@ -51,7 +51,7 @@ export class UserService {
       await this.i18nService.loadSystemMessage(this.acceptLanguage);
       const L_SYSTEM_00003 =
         this.i18nService.getSystemMessage("L_SYSTEM_00003");
-      throwError({ statusCode: 404, message: L_SYSTEM_00003 });
+      throwZError({ statusCode: 404, message: L_SYSTEM_00003 });
     } else {
       return user;
     }
@@ -69,14 +69,14 @@ export class UserService {
       if (oldUser.account === account) {
         const L_SYSTEM_00007 =
           this.i18nService.getSystemMessage("L_SYSTEM_00007");
-        throwError({
+        throwZError({
           statusCode: 400,
           message: L_SYSTEM_00007,
         });
       } else {
         const L_SYSTEM_00008 =
           this.i18nService.getSystemMessage("L_SYSTEM_00008");
-        throwError({
+        throwZError({
           statusCode: 400,
           message: L_SYSTEM_00008,
         });
@@ -95,7 +95,7 @@ export class UserService {
       await this.i18nService.loadSystemMessage(this.acceptLanguage);
       const L_SYSTEM_00003 =
         this.i18nService.getSystemMessage("L_SYSTEM_00003");
-      throwError({ statusCode: 404, message: L_SYSTEM_00003 });
+      throwZError({ statusCode: 404, message: L_SYSTEM_00003 });
     } else {
       await prisma.user.update({
         where: { id },
@@ -110,7 +110,7 @@ export class UserService {
       await this.i18nService.loadSystemMessage(this.acceptLanguage);
       const L_SYSTEM_00003 =
         this.i18nService.getSystemMessage("L_SYSTEM_00003");
-      throwError({ statusCode: 404, message: L_SYSTEM_00003 });
+      throwZError({ statusCode: 404, message: L_SYSTEM_00003 });
     } else {
       await prisma.user.delete({
         where: { id },

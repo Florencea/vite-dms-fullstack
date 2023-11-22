@@ -1,9 +1,9 @@
 import { zodiosContext } from "@zodios/express";
 import { authApiProtected, authApiPublic } from "../../api/auth";
-import { throwError, validationErrorHandler } from "../../api/util";
 import { DOC_SECURITY_SCHEME, JWT_SETTINGS } from "../config";
 import { AuthService } from "../services/AuthService";
 import { I18nService } from "../services/I18nService";
+import { throwZError, validationErrorHandler } from "./error";
 
 const ctx = zodiosContext();
 
@@ -38,7 +38,7 @@ authControllerPublic.post("/auth", (req, res, next) => {
         const i18nService = new I18nService();
         await i18nService.loadSystemMessage(req.headers["accept-language"]);
         const L_SYSTEM_00009 = i18nService.getSystemMessage("L_SYSTEM_00009");
-        throwError({ statusCode: 500, message: L_SYSTEM_00009 });
+        throwZError({ statusCode: 500, message: L_SYSTEM_00009 });
       }
     } catch (err) {
       next(err);

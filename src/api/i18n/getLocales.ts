@@ -1,6 +1,6 @@
 import { makeEndpoint } from "@zodios/core";
 import { z } from "zod";
-import { errors } from "../util";
+import { errors } from "../error";
 
 const status = 200;
 const response = z.record(z.string(), z.string());

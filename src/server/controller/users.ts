@@ -1,8 +1,8 @@
 import { zodiosContext } from "@zodios/express";
 import usersApi from "../../api/users";
-import { validationErrorHandler } from "../../api/util";
 import { AuthService } from "../services/AuthService";
 import { UserService } from "../services/UserService";
+import { validationErrorHandler } from "./error";
 
 const ctx = zodiosContext();
 

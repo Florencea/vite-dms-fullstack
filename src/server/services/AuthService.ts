@@ -4,8 +4,8 @@ import type express from "express";
 import * as jose from "jose";
 import { prisma } from "../../../prisma";
 import type { ReqAuthLoginT } from "../../api/auth/login";
-import { throwError } from "../../api/util";
 import { DOC_SECURITY_SCHEME, JWT_SETTINGS } from "../config";
+import { throwZError } from "../controller/error";
 import { I18nService } from "./I18nService";
 
 interface UserMetaT {
@@ -41,7 +41,7 @@ export class AuthService {
     if (!this.userMeta) {
       const L_SYSTEM_00001 =
         this.i18nService.getSystemMessage("L_SYSTEM_00001");
-      throwError({
+      throwZError({
         statusCode: 401,
         message: L_SYSTEM_00001,
       });
@@ -58,7 +58,7 @@ export class AuthService {
           );
           const L_SYSTEM_00002 =
             this.i18nService.getSystemMessage("L_SYSTEM_00002");
-          throwError({
+          throwZError({
             statusCode: 403,
             message: `${L_SYSTEM_00002}${functionNames
               .map(({ name }) => name)
@@ -80,19 +80,19 @@ export class AuthService {
     if (!user) {
       const L_SYSTEM_00003 =
         this.i18nService.getSystemMessage("L_SYSTEM_00003");
-      throwError({ statusCode: 401, message: L_SYSTEM_00003 });
+      throwZError({ statusCode: 401, message: L_SYSTEM_00003 });
     } else {
       const passwordMatch = await argon2.verify(user.password, password);
       if (!passwordMatch) {
         const L_SYSTEM_00004 =
           this.i18nService.getSystemMessage("L_SYSTEM_00004");
-        throwError({ statusCode: 401, message: L_SYSTEM_00004 });
+        throwZError({ statusCode: 401, message: L_SYSTEM_00004 });
       } else {
         const userMeta = await this.getUserMeta(user);
         if (!userMeta.isEnabled.ok) {
           const L_SYSTEM_00002 =
             this.i18nService.getSystemMessage("L_SYSTEM_00002");
-          throwError({
+          throwZError({
             statusCode: 403,
             message: `${L_SYSTEM_00002}${userMeta.isEnabled.name}`,
           });
@@ -123,20 +123,20 @@ export class AuthService {
     if (!authorization) {
       const L_SYSTEM_00005 =
         this.i18nService.getSystemMessage("L_SYSTEM_00005");
-      throwError({ statusCode: 401, message: L_SYSTEM_00005 });
+      throwZError({ statusCode: 401, message: L_SYSTEM_00005 });
     } else {
       const token = authorization.replace("Bearer ", "");
       const id = await this.verifyJwt(token);
       if (!id) {
         const L_SYSTEM_00006 =
           this.i18nService.getSystemMessage("L_SYSTEM_00006");
-        throwError({ statusCode: 401, message: L_SYSTEM_00006 });
+        throwZError({ statusCode: 401, message: L_SYSTEM_00006 });
       } else {
         const user = await prisma.user.findUnique({ where: { id } });
         if (!user) {
           const L_SYSTEM_00003 =
             this.i18nService.getSystemMessage("L_SYSTEM_00003");
-          throwError({ statusCode: 401, message: L_SYSTEM_00003 });
+          throwZError({ statusCode: 401, message: L_SYSTEM_00003 });
         } else {
           const userMeta = await this.getUserMeta(user);
           return userMeta;

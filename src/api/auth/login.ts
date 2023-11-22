@@ -1,6 +1,6 @@
 import { makeEndpoint, makeParameters } from "@zodios/core";
 import { z } from "zod";
-import { errors } from "../util";
+import { errors } from "../error";
 
 const SECURITY_SCHEME = process.env.VITE_API_SECURITY ?? "cookie";
 const IS_JWT = SECURITY_SCHEME === "jwt";
