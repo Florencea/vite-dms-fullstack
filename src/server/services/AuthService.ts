@@ -28,7 +28,10 @@ export class AuthService {
 
   public authenticate(codes: string[], handler: () => Promise<void>) {
     if (!this.userMeta) {
-      throwError({ statusCode: 401, message: "No authorization provided" });
+      throwError({
+        statusCode: 401,
+        statusMessage: "No authorization provided",
+      });
     } else {
       if (!this.userMeta.isAdmin) {
         const functionSet = new Set(
@@ -42,7 +45,7 @@ export class AuthService {
           );
           throwError({
             statusCode: 403,
-            message: `Permission Denied: ${functionNames
+            statusMessage: `Permission Denied: ${functionNames
               .map(({ name }) => name)
               .join(", ")}`,
           });
@@ -59,17 +62,17 @@ export class AuthService {
     const { account, password } = params;
     const user = await prisma.user.findUnique({ where: { account } });
     if (!user) {
-      throwError({ statusCode: 401, message: "User not found" });
+      throwError({ statusCode: 401, statusMessage: "User not found" });
     } else {
       const passwordMatch = await argon2.verify(user.password, password);
       if (!passwordMatch) {
-        throwError({ statusCode: 401, message: "Wrong password" });
+        throwError({ statusCode: 401, statusMessage: "Wrong password" });
       } else {
         const userMeta = await this.getUserMeta(user);
         if (!userMeta.isEnabled.ok) {
           throwError({
             statusCode: 403,
-            message: `Permission Denied: ${userMeta.isEnabled.name}`,
+            statusMessage: `Permission Denied: ${userMeta.isEnabled.name}`,
           });
         } else {
           const token = await this.createJwt(user);
@@ -87,16 +90,16 @@ export class AuthService {
         ? req.headers.authorization
         : cookies[SECURITY_SCHEME];
     if (!authorization) {
-      throwError({ statusCode: 401, message: "No token provided" });
+      throwError({ statusCode: 401, statusMessage: "No token provided" });
     } else {
       const token = authorization.replace("Bearer ", "");
       const id = await this.verifyJwt(token);
       if (!id) {
-        throwError({ statusCode: 401, message: "Invalid token" });
+        throwError({ statusCode: 401, statusMessage: "Invalid token" });
       } else {
         const user = await prisma.user.findUnique({ where: { id } });
         if (!user) {
-          throwError({ statusCode: 401, message: "User not found" });
+          throwError({ statusCode: 401, statusMessage: "User not found" });
         } else {
           const userMeta = await this.getUserMeta(user);
           return userMeta;

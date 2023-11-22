@@ -39,7 +39,7 @@ export class UserService {
       },
     });
     if (!user) {
-      throwError({ statusCode: 404, message: "User not found" });
+      throwError({ statusCode: 404, statusMessage: "User not found" });
     } else {
       return user;
     }
@@ -56,12 +56,12 @@ export class UserService {
       if (oldUser.account === account) {
         throwError({
           statusCode: 400,
-          message: "User account already exist",
+          statusMessage: "User account already exist",
         });
       } else {
         throwError({
           statusCode: 400,
-          message: "User email already exist",
+          statusMessage: "User email already exist",
         });
       }
     } else {
@@ -85,7 +85,7 @@ export class UserService {
     const { email, name, phone, website } = data;
     const oldUser = await this.get(id);
     if (!oldUser) {
-      throwError({ statusCode: 404, message: "User not found" });
+      throwError({ statusCode: 404, statusMessage: "User not found" });
     } else {
       await prisma.user.update({
         where: { id },
@@ -97,7 +97,7 @@ export class UserService {
   public async remove(id: string): Promise<void> {
     const oldUser = await this.get(id);
     if (!oldUser) {
-      throwError({ statusCode: 404, message: "User not found" });
+      throwError({ statusCode: 404, statusMessage: "User not found" });
     } else {
       await prisma.user.delete({
         where: { id },

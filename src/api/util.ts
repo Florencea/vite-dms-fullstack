@@ -8,17 +8,14 @@ interface ZErrorT {
   message: string;
   zError: {
     statusCode: number;
-    body: { message: string };
+    statusMessage: string;
   };
 }
 
 class ZError extends Error {
-  name: string;
-  message: string;
-  zError: {
-    statusCode: number;
-    body: { message: string };
-  };
+  name: ZErrorT["name"];
+  message: ZErrorT["message"];
+  zError: ZErrorT["zError"];
   constructor({ name, message, zError }: ZErrorT) {
     super(message);
     this.name = name;
@@ -27,16 +24,17 @@ class ZError extends Error {
   }
 }
 
-export const throwError = (params: { statusCode: number; message: string }) => {
-  const { statusCode, message } = params;
+export const throwError = (params: {
+  statusCode: number;
+  statusMessage: string;
+}) => {
+  const { statusCode, statusMessage } = params;
   throw new ZError({
     name: "ZError",
     message: "Server Error",
     zError: {
       statusCode,
-      body: {
-        message,
-      },
+      statusMessage,
     },
   });
 };
@@ -64,25 +62,19 @@ export const makeErrorResponse = (err: unknown) => {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       return {
         statusCode: 400,
-        body: {
-          message: parsePrismaError(err),
-        },
+        statusMessage: parsePrismaError(err),
       };
     } else {
       const errMessage = err.message.split("\n").at(-1) ?? "Server error";
       return {
         statusCode: 500,
-        body: {
-          message: `${err.name}: ${errMessage}`,
-        },
+        statusMessage: `${err.name}: ${errMessage}`,
       };
     }
   } else {
     return {
       statusCode: 500,
-      body: {
-        message: "Server error",
-      },
+      statusMessage: "Server error",
     };
   }
 };
@@ -98,15 +90,16 @@ export const validationErrorHandler = (
   __: NextFunction,
 ) => {
   try {
-    const message = err.error
+    const statusMessage = err.error
       .map((e) => {
         return `Field \`${e.path.map((s) => `${s}`).join(".")}\`, ${e.message}`;
       })
       .join("\n");
-    throwError({ statusCode: 400, message });
+    throwError({ statusCode: 400, statusMessage });
   } catch (err) {
-    const { statusCode, body } = makeErrorResponse(err);
-    res.status(statusCode).json(body);
+    const { statusCode, statusMessage } = makeErrorResponse(err);
+    res.statusMessage = statusMessage;
+    res.status(statusCode).json();
   }
 };
 
@@ -114,10 +107,6 @@ export const errors = makeErrors([
   {
     status: "default",
     description: "Failed",
-    schema: z
-      .object({
-        message: z.string(),
-      })
-      .required(),
+    schema: z.void(),
   },
 ]);

@@ -5,8 +5,9 @@ const errorController: ErrorRequestHandler = (err, _, res, next) => {
   if (res.headersSent) {
     next(err);
   }
-  const { statusCode, body } = makeErrorResponse(err);
-  res.status(statusCode).json(body);
+  const { statusCode, statusMessage } = makeErrorResponse(err);
+  res.statusMessage = statusMessage;
+  res.status(statusCode).json();
 };
 
 export default errorController;

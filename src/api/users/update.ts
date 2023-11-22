@@ -25,7 +25,7 @@ const parameters = makeParameters([
 export type ReqUsersUpdateT = z.infer<(typeof parameters)["1"]["schema"]>;
 
 const status = 204;
-const response = z.object({});
+const response = z.void();
 const responseDescription = "No Content";
 
 const update = makeEndpoint({

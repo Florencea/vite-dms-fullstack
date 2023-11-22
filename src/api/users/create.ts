@@ -22,7 +22,7 @@ const parameters = makeParameters([
 export type ReqUsersCreateT = z.infer<(typeof parameters)["0"]["schema"]>;
 
 const status = 201;
-const response = z.object({});
+const response = z.void();
 const responseDescription = "Created";
 
 const create = makeEndpoint({

@@ -8,7 +8,7 @@ const notfoundController: RequestHandler = (req, res, next) => {
     }
     throwError({
       statusCode: 500,
-      message: `Invalid API endpoint ${req.method} ${req.url}`,
+      statusMessage: `Invalid API endpoint ${req.method} ${req.url}`,
     });
   } catch (err) {
     next(err);

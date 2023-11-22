@@ -23,10 +23,10 @@ authController.post("/auth", (req, res, next) => {
             .setHeader("Set-Cookie", [
               `${SECURITY_SCHEME}=${data.token}; HttpOnly; Path=/; Max-Age=${maxAge}; Secure=True;`,
             ])
-            .json({});
+            .json();
         }
       } else {
-        throwError({ statusCode: 500, message: "Server Error" });
+        throwError({ statusCode: 500, statusMessage: "Server Error" });
       }
     } catch (err) {
       next(err);

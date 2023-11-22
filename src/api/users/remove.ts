@@ -11,7 +11,7 @@ const parameters = makeParameters([
 ]);
 
 const status = 204;
-const response = z.object({});
+const response = z.void();
 const responseDescription = "No Content";
 
 const remove = makeEndpoint({

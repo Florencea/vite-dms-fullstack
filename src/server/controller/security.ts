@@ -11,7 +11,7 @@ const securityHandler: RequestHandler = (req, res, next) => {
       const authService = new AuthService();
       const userMeta = await authService.verify(req);
       if (!userMeta) {
-        throwError({ statusCode: 401, message: "No token provided" });
+        throwError({ statusCode: 401, statusMessage: "No token provided" });
       } else {
         req.headers.authorization = JSON.stringify(userMeta);
         next();

@@ -14,7 +14,7 @@ usersController.post("/users", (req, res, next) => {
     try {
       const userService = new UserService();
       await userService.create(req.body);
-      res.status(201).json({});
+      res.status(201).json();
     } catch (err) {
       next(err);
     }
@@ -53,7 +53,7 @@ usersController.put("/users/:id", (req, res, next) => {
     try {
       const userServvice = new UserService();
       await userServvice.update(req.params.id, req.body);
-      res.status(204).json({});
+      res.status(204).json();
     } catch (err) {
       next(err);
     }
@@ -66,7 +66,7 @@ usersController.delete("/users/:id", (req, res, next) => {
     try {
       const userService = new UserService();
       await userService.remove(req.params.id);
-      res.status(204).json({});
+      res.status(204).json();
     } catch (err) {
       next(err);
     }

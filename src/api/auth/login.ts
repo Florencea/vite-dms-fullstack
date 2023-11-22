@@ -20,21 +20,20 @@ const parameters = makeParameters([
 
 export type ReqAuthLoginT = z.infer<(typeof parameters)["0"]["schema"]>;
 
-const status = IS_JWT ? 200 : 204;
+const status = 200;
 const response = IS_JWT
   ? z
       .object({
         token: z.string(),
       })
       .required()
-  : z.object({});
-const responseDescription = IS_JWT ? "OK" : "No Content";
+  : z.void();
+const responseDescription = "OK";
 
 interface ResAuthLoginJwtT {
   token: string;
 }
-type ResAuthLoginCookieT = Record<string, never>;
-export type ResAuthLoginT = ResAuthLoginJwtT | ResAuthLoginCookieT;
+export type ResAuthLoginT = ResAuthLoginJwtT | undefined;
 
 const login = makeEndpoint({
   method: "post",
