@@ -3,6 +3,7 @@ import { z } from "zod";
 import { errors } from "../util";
 
 const SECURITY_SCHEME = process.env.VITE_API_SECURITY ?? "cookie";
+const IS_JWT = SECURITY_SCHEME === "jwt";
 
 const parameters = makeParameters([
   {
@@ -19,16 +20,15 @@ const parameters = makeParameters([
 
 export type ReqAuthLoginT = z.infer<(typeof parameters)["0"]["schema"]>;
 
-const status = SECURITY_SCHEME === "jwt" ? 200 : 204;
-const response =
-  SECURITY_SCHEME === "jwt"
-    ? z
-        .object({
-          token: z.string(),
-        })
-        .required()
-    : z.object({});
-const responseDescription = SECURITY_SCHEME === "jwt" ? "OK" : "No Content";
+const status = IS_JWT ? 200 : 204;
+const response = IS_JWT
+  ? z
+      .object({
+        token: z.string(),
+      })
+      .required()
+  : z.object({});
+const responseDescription = IS_JWT ? "OK" : "No Content";
 
 interface ResAuthLoginJwtT {
   token: string;
