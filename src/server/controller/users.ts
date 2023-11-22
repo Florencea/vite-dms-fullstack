@@ -62,7 +62,7 @@ usersController.get("/users/:id", (req, res, next) => {
   void handler();
 });
 
-usersController.patch("/users/:id", (req, res, next) => {
+usersController.put("/users/:id", (req, res, next) => {
   new AuthService(["USER_UPDATE"], req.headers.authorization);
   const handler = async () => {
     try {

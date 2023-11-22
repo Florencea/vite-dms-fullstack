@@ -42,7 +42,7 @@ const response = makeZResponse({
 export type ResUsersUpdateT = z.infer<typeof response>["data"];
 
 const update = makeEndpoint({
-  method: "patch",
+  method: "put",
   path: "/users/:id",
   description: "Update user",
   parameters,
