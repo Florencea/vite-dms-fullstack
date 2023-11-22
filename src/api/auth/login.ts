@@ -7,6 +7,11 @@ const IS_JWT = SECURITY_SCHEME === "jwt";
 
 const parameters = makeParameters([
   {
+    name: "Accept-Language",
+    type: "Header",
+    schema: z.string().optional(),
+  },
+  {
     name: "data",
     type: "Body",
     schema: z
@@ -18,7 +23,7 @@ const parameters = makeParameters([
   },
 ]);
 
-export type ReqAuthLoginT = z.infer<(typeof parameters)["0"]["schema"]>;
+export type ReqAuthLoginT = z.infer<(typeof parameters)["1"]["schema"]>;
 
 const status = 200;
 const response = IS_JWT

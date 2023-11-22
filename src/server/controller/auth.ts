@@ -3,20 +3,24 @@ import { authApiProtected, authApiPublic } from "../../api/auth";
 import { throwError, validationErrorHandler } from "../../api/util";
 import { DOC_SECURITY_SCHEME, JWT_SETTINGS } from "../config";
 import { AuthService } from "../services/AuthService";
+import { I18nService } from "../services/I18nService";
 
 const ctx = zodiosContext();
 
 export const authControllerPublic = ctx.router(authApiPublic, {
-  validationErrorHandler,
+  validationErrorHandler: void validationErrorHandler,
 });
 export const authControllerProtected = ctx.router(authApiProtected, {
-  validationErrorHandler,
+  validationErrorHandler: void validationErrorHandler,
 });
 
 authControllerPublic.post("/auth", (req, res, next) => {
   const handler = async () => {
     try {
-      const authService = new AuthService();
+      const authService = new AuthService(
+        undefined,
+        req.headers["accept-language"],
+      );
       const data = await authService.login(req.body);
       if (data) {
         const [SECURITY_SCHEME] = DOC_SECURITY_SCHEME;
@@ -31,7 +35,10 @@ authControllerPublic.post("/auth", (req, res, next) => {
             .json();
         }
       } else {
-        throwError({ statusCode: 500, statusMessage: "Server Error" });
+        const i18nService = new I18nService();
+        await i18nService.loadSystemMessage(req.headers["accept-language"]);
+        const L_SYSTEM_00009 = i18nService.getSystemMessage("L_SYSTEM_00009");
+        throwError({ statusCode: 500, message: L_SYSTEM_00009 });
       }
     } catch (err) {
       next(err);
@@ -59,8 +66,11 @@ authControllerPublic.delete("/auth", (_, res, next) => {
 });
 
 authControllerProtected.get("/auth", (req, res, next) => {
-  const authService = new AuthService(req.headers.authorization);
-  authService.authenticate([], () => {
+  const authService = new AuthService(
+    req.headers.authorization,
+    req.headers["accept-language"],
+  );
+  void authService.authenticate([], () => {
     try {
       const data = authService.getUserFunctions();
       res.json(data);

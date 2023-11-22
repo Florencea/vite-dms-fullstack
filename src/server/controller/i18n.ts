@@ -7,11 +7,24 @@ import { I18nService } from "../services/I18nService";
 const ctx = zodiosContext();
 
 export const i18nControllerPublic = ctx.router(i18nApiPublic, {
-  validationErrorHandler,
+  validationErrorHandler: void validationErrorHandler,
 });
 
 export const i18nControllerProtected = ctx.router(i18nApiProtected, {
-  validationErrorHandler,
+  validationErrorHandler: void validationErrorHandler,
+});
+
+i18nControllerPublic.get("/i18n/locales", (req, res, next) => {
+  const handler = async () => {
+    try {
+      const i18nService = new I18nService();
+      const data = await i18nService.getLocales();
+      res.json(data);
+    } catch (err) {
+      next(err);
+    }
+  };
+  void handler();
 });
 
 i18nControllerPublic.get("/i18n/public", (req, res, next) => {
@@ -31,7 +44,7 @@ i18nControllerPublic.get("/i18n/public", (req, res, next) => {
 
 i18nControllerProtected.get("/i18n", (req, res, next) => {
   const authService = new AuthService(req.headers.authorization);
-  authService.authenticate([], async (functions) => {
+  void authService.authenticate([], async (functions) => {
     try {
       const i18nService = new I18nService();
       const data = await i18nService.getList(

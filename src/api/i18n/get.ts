@@ -6,7 +6,7 @@ const parameters = makeParameters([
   {
     name: "Accept-Language",
     type: "Header",
-    schema: z.string().default("en-US"),
+    schema: z.string().optional(),
   },
 ]);
 

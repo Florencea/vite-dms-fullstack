@@ -2,13 +2,14 @@ import { Prisma } from "@prisma/client";
 import { makeErrors } from "@zodios/core";
 import type { NextFunction, Request, Response } from "express";
 import { z, type ZodIssue } from "zod";
+import { I18nService } from "../server/services/I18nService";
 
 interface ZErrorT {
   name: string;
   message: string;
   zError: {
     statusCode: number;
-    statusMessage: string;
+    message: string;
   };
 }
 
@@ -24,17 +25,14 @@ class ZError extends Error {
   }
 }
 
-export const throwError = (params: {
-  statusCode: number;
-  statusMessage: string;
-}) => {
-  const { statusCode, statusMessage } = params;
+export const throwError = (params: { statusCode: number; message: string }) => {
+  const { statusCode, message } = params;
   throw new ZError({
     name: "ZError",
     message: "Server Error",
     zError: {
       statusCode,
-      statusMessage,
+      message,
     },
   });
 };
@@ -62,44 +60,48 @@ export const makeErrorResponse = (err: unknown) => {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       return {
         statusCode: 400,
-        statusMessage: parsePrismaError(err),
+        message: parsePrismaError(err),
       };
     } else {
       const errMessage = err.message.split("\n").at(-1) ?? "Server error";
       return {
         statusCode: 500,
-        statusMessage: `${err.name}: ${errMessage}`,
+        message: `${err.name}: ${errMessage}`,
       };
     }
   } else {
     return {
       statusCode: 500,
-      statusMessage: "Server error",
+      message: "Server error",
     };
   }
 };
 
-export const validationErrorHandler = (
+export const validationErrorHandler = async (
   err: {
     context: string;
     error: ZodIssue[];
   },
-  _: Request,
+  req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   __: NextFunction,
 ) => {
   try {
-    const statusMessage = err.error
+    const i18nService = new I18nService();
+    await i18nService.loadSystemMessage(req.headers["accept-language"]);
+    const L_SYSTEM_00011 = i18nService.getSystemMessage("L_SYSTEM_00011");
+    const message = err.error
       .map((e) => {
-        return `Field \`${e.path.map((s) => `${s}`).join(".")}\`, ${e.message}`;
+        return `${L_SYSTEM_00011}\`${e.path.map((s) => `${s}`).join(".")}\`, ${
+          e.message
+        }`;
       })
       .join("\n");
-    throwError({ statusCode: 400, statusMessage });
+    throwError({ statusCode: 400, message });
   } catch (err) {
-    const { statusCode, statusMessage } = makeErrorResponse(err);
-    res.statusMessage = statusMessage;
-    res.status(statusCode).json();
+    const { statusCode, message } = makeErrorResponse(err);
+    res.status(statusCode).json({ message });
   }
 };
 
@@ -107,6 +109,6 @@ export const errors = makeErrors([
   {
     status: "default",
     description: "Failed",
-    schema: z.void(),
+    schema: z.object({ message: z.string() }).required(),
   },
 ]);

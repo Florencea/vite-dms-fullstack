@@ -4,6 +4,11 @@ import { errors } from "../util";
 
 const parameters = makeParameters([
   {
+    name: "Accept-Language",
+    type: "Header",
+    schema: z.string().optional(),
+  },
+  {
     name: "id",
     type: "Path",
     schema: z.string().cuid2(),

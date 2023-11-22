@@ -6,6 +6,7 @@ import { prisma } from "../../../prisma";
 import type { ReqAuthLoginT } from "../../api/auth/login";
 import { throwError } from "../../api/util";
 import { DOC_SECURITY_SCHEME, JWT_SETTINGS } from "../config";
+import { I18nService } from "./I18nService";
 
 interface UserMetaT {
   userId: string;
@@ -18,24 +19,31 @@ export class AuthService {
   private ADMIN_GROUP_CODE = "G000";
   private LOGIN_FUNCTION_CODE = "LOGIN";
   private userMeta?: UserMetaT;
+  private i18nService: I18nService;
+  private acceptLanguage?: string;
 
-  constructor(authorization?: string) {
+  constructor(authorization?: string, acceptLanguage?: string) {
     if (authorization) {
       const userMeta = JSON.parse(authorization) as UserMetaT;
       this.userMeta = userMeta;
     }
+    this.i18nService = new I18nService();
+    this.acceptLanguage = acceptLanguage;
   }
 
-  public authenticate(
+  public async authenticate(
     codes: string[],
     handler:
       | ((functions: string[]) => Promise<void>)
       | ((functions: string[]) => void),
   ) {
+    await this.i18nService.loadSystemMessage(this.acceptLanguage);
     if (!this.userMeta) {
+      const L_SYSTEM_00001 =
+        this.i18nService.getSystemMessage("L_SYSTEM_00001");
       throwError({
         statusCode: 401,
-        statusMessage: "No authorization provided",
+        message: L_SYSTEM_00001,
       });
     } else {
       if (!this.userMeta.isAdmin) {
@@ -48,9 +56,11 @@ export class AuthService {
           const functionNames = this.userMeta.functions.filter(({ code }) =>
             excluded.includes(code),
           );
+          const L_SYSTEM_00002 =
+            this.i18nService.getSystemMessage("L_SYSTEM_00002");
           throwError({
             statusCode: 403,
-            statusMessage: `Permission Denied: ${functionNames
+            message: `${L_SYSTEM_00002}${functionNames
               .map(({ name }) => name)
               .join(", ")}`,
           });
@@ -64,20 +74,27 @@ export class AuthService {
   }
 
   public async login(params: ReqAuthLoginT) {
+    await this.i18nService.loadSystemMessage(this.acceptLanguage);
     const { account, password } = params;
     const user = await prisma.user.findUnique({ where: { account } });
     if (!user) {
-      throwError({ statusCode: 401, statusMessage: "User not found" });
+      const L_SYSTEM_00003 =
+        this.i18nService.getSystemMessage("L_SYSTEM_00003");
+      throwError({ statusCode: 401, message: L_SYSTEM_00003 });
     } else {
       const passwordMatch = await argon2.verify(user.password, password);
       if (!passwordMatch) {
-        throwError({ statusCode: 401, statusMessage: "Wrong password" });
+        const L_SYSTEM_00004 =
+          this.i18nService.getSystemMessage("L_SYSTEM_00004");
+        throwError({ statusCode: 401, message: L_SYSTEM_00004 });
       } else {
         const userMeta = await this.getUserMeta(user);
         if (!userMeta.isEnabled.ok) {
+          const L_SYSTEM_00002 =
+            this.i18nService.getSystemMessage("L_SYSTEM_00002");
           throwError({
             statusCode: 403,
-            statusMessage: `Permission Denied: ${userMeta.isEnabled.name}`,
+            message: `${L_SYSTEM_00002}${userMeta.isEnabled.name}`,
           });
         } else {
           const token = await this.createJwt(user);
@@ -96,6 +113,7 @@ export class AuthService {
   }
 
   public async verify(req: express.Request) {
+    await this.i18nService.loadSystemMessage(this.acceptLanguage);
     const [SECURITY_SCHEME] = DOC_SECURITY_SCHEME;
     const cookies = req.cookies as Record<string, string>;
     const authorization =
@@ -103,16 +121,22 @@ export class AuthService {
         ? req.headers.authorization
         : cookies[SECURITY_SCHEME];
     if (!authorization) {
-      throwError({ statusCode: 401, statusMessage: "Unauthorized" });
+      const L_SYSTEM_00005 =
+        this.i18nService.getSystemMessage("L_SYSTEM_00005");
+      throwError({ statusCode: 401, message: L_SYSTEM_00005 });
     } else {
       const token = authorization.replace("Bearer ", "");
       const id = await this.verifyJwt(token);
       if (!id) {
-        throwError({ statusCode: 401, statusMessage: "Invalid token" });
+        const L_SYSTEM_00006 =
+          this.i18nService.getSystemMessage("L_SYSTEM_00006");
+        throwError({ statusCode: 401, message: L_SYSTEM_00006 });
       } else {
         const user = await prisma.user.findUnique({ where: { id } });
         if (!user) {
-          throwError({ statusCode: 401, statusMessage: "User not found" });
+          const L_SYSTEM_00003 =
+            this.i18nService.getSystemMessage("L_SYSTEM_00003");
+          throwError({ statusCode: 401, message: L_SYSTEM_00003 });
         } else {
           const userMeta = await this.getUserMeta(user);
           return userMeta;

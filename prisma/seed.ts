@@ -17,6 +17,10 @@ const DEFAULT_GROUP = {
 
 const FUNCTIONS = [
   {
+    code: "SYSTEM",
+    name: "For system response messages",
+  },
+  {
     code: "LOGIN",
     name: "Login to system",
   },
@@ -50,6 +54,108 @@ const LOCALES = [
   {
     code: "en-US",
     name: "English",
+  },
+];
+
+const I18N_ZHTW_SYSTEM = [
+  {
+    code: "L_SYSTEM_00001",
+    value: "憑證不存在",
+  },
+  {
+    code: "L_SYSTEM_00002",
+    value: "無存取權限: ",
+  },
+  {
+    code: "L_SYSTEM_00003",
+    value: "使用者不存在",
+  },
+  {
+    code: "L_SYSTEM_00004",
+    value: "密碼錯誤",
+  },
+  {
+    code: "L_SYSTEM_00005",
+    value: "需要授權",
+  },
+  {
+    code: "L_SYSTEM_00006",
+    value: "無效的憑證",
+  },
+  {
+    code: "L_SYSTEM_00007",
+    value: "使用者帳號已存在",
+  },
+  {
+    code: "L_SYSTEM_00008",
+    value: "使用者電子信箱已存在",
+  },
+  {
+    code: "L_SYSTEM_00009",
+    value: "伺服器發生錯誤",
+  },
+  {
+    code: "L_SYSTEM_00010",
+    value: "無效的 API 路由 ",
+  },
+  {
+    code: "L_SYSTEM_00011",
+    value: "欄位 ",
+  },
+  {
+    code: "L_SYSTEM_00012",
+    value: " 在資料庫中已存在重複資料",
+  },
+];
+
+const I18N_ENUS_SYSTEM = [
+  {
+    code: "L_SYSTEM_00001",
+    value: "No authorization provided",
+  },
+  {
+    code: "L_SYSTEM_00002",
+    value: "Permission Denied: ",
+  },
+  {
+    code: "L_SYSTEM_00003",
+    value: "User not found",
+  },
+  {
+    code: "L_SYSTEM_00004",
+    value: "Wrong password",
+  },
+  {
+    code: "L_SYSTEM_00005",
+    value: "Unauthorized",
+  },
+  {
+    code: "L_SYSTEM_00006",
+    value: "Invalid token",
+  },
+  {
+    code: "L_SYSTEM_00007",
+    value: "User account already exist",
+  },
+  {
+    code: "L_SYSTEM_00008",
+    value: "User email already exist",
+  },
+  {
+    code: "L_SYSTEM_00009",
+    value: "Server Error",
+  },
+  {
+    code: "L_SYSTEM_00010",
+    value: "Invalid API endpoint ",
+  },
+  {
+    code: "L_SYSTEM_00011",
+    value: "Field ",
+  },
+  {
+    code: "L_SYSTEM_00012",
+    value: " already exists in database",
   },
 ];
 
@@ -209,22 +315,69 @@ async function main() {
         create: f,
         update: f,
       });
-      await prisma.groupFunction.upsert({
-        where: {
-          groupId_functionId: {
+      if (ff.code !== "SYSTEM") {
+        await prisma.groupFunction.upsert({
+          where: {
+            groupId_functionId: {
+              groupId: defaultGroup.id,
+              functionId: ff.id,
+            },
+          },
+          create: {
             groupId: defaultGroup.id,
             functionId: ff.id,
           },
-        },
-        create: {
-          groupId: defaultGroup.id,
-          functionId: ff.id,
-        },
-        update: {
-          groupId: defaultGroup.id,
-          functionId: ff.id,
-        },
-      });
+          update: {
+            groupId: defaultGroup.id,
+            functionId: ff.id,
+          },
+        });
+      }
+      if (ff.code === "SYSTEM") {
+        await Promise.all(
+          LOCALES.map(async (l) => {
+            const ll = await prisma.locale.upsert({
+              where: {
+                code: l.code,
+              },
+              create: l,
+              update: l,
+            });
+            if (ll.code === "zh-TW") {
+              await Promise.all(
+                I18N_ZHTW_SYSTEM.map(async (i) => {
+                  await prisma.i18n.upsert({
+                    where: {
+                      code_localeId: {
+                        code: i.code,
+                        localeId: ll.id,
+                      },
+                    },
+                    create: { ...i, localeId: ll.id, functionId: ff.id },
+                    update: { ...i, localeId: ll.id, functionId: ff.id },
+                  });
+                }),
+              );
+            }
+            if (ll.code === "en-US") {
+              await Promise.all(
+                I18N_ENUS_SYSTEM.map(async (i) => {
+                  await prisma.i18n.upsert({
+                    where: {
+                      code_localeId: {
+                        code: i.code,
+                        localeId: ll.id,
+                      },
+                    },
+                    create: { ...i, localeId: ll.id, functionId: ff.id },
+                    update: { ...i, localeId: ll.id, functionId: ff.id },
+                  });
+                }),
+              );
+            }
+          }),
+        );
+      }
       if (ff.code === "USER_READ_LIST") {
         await Promise.all(
           LOCALES.map(async (l) => {

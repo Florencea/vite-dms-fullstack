@@ -1,6 +1,14 @@
-import { makeEndpoint } from "@zodios/core";
+import { makeEndpoint, makeParameters } from "@zodios/core";
 import { z } from "zod";
 import { errors } from "../util";
+
+const parameters = makeParameters([
+  {
+    name: "Accept-Language",
+    type: "Header",
+    schema: z.string().optional(),
+  },
+]);
 
 const status = 200;
 const response = z.string().array();
@@ -12,6 +20,7 @@ const get = makeEndpoint({
   method: "get",
   path: "/auth",
   description: "Get current user functions",
+  parameters,
   status,
   response,
   responseDescription,

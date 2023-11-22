@@ -4,6 +4,11 @@ import { errors } from "../util";
 
 const parameters = makeParameters([
   {
+    name: "Accept-Language",
+    type: "Header",
+    schema: z.string().optional(),
+  },
+  {
     name: "id",
     type: "Path",
     schema: z.string().cuid2(),
@@ -22,7 +27,7 @@ const parameters = makeParameters([
   },
 ]);
 
-export type ReqUsersUpdateT = z.infer<(typeof parameters)["1"]["schema"]>;
+export type ReqUsersUpdateT = z.infer<(typeof parameters)["2"]["schema"]>;
 
 const status = 204;
 const response = z.void();
