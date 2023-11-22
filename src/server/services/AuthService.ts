@@ -28,7 +28,9 @@ export class AuthService {
 
   public authenticate(
     codes: string[],
-    handler: (() => Promise<void>) | (() => void),
+    handler:
+      | ((functions: string[]) => Promise<void>)
+      | ((functions: string[]) => void),
   ) {
     if (!this.userMeta) {
       throwError({
@@ -53,10 +55,10 @@ export class AuthService {
               .join(", ")}`,
           });
         } else {
-          void handler();
+          void handler(this.userMeta.functions.map(({ code }) => code));
         }
       } else {
-        void handler();
+        void handler(this.userMeta.functions.map(({ code }) => code));
       }
     }
   }
