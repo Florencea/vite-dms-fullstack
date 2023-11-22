@@ -140,29 +140,29 @@ export class AuthService {
   }
 
   private async getUserMeta(user: User) {
-    const groupPids = await prisma.userGroup.findMany({
+    const groupIds = await prisma.userGroup.findMany({
       where: {
-        userPid: user.pid,
+        userId: user.id,
       },
-      select: { groupPid: true },
+      select: { groupId: true },
     });
-    const functionPids = await prisma.groupFunction.findMany({
+    const functionIds = await prisma.groupFunction.findMany({
       where: {
-        groupPid: {
-          in: groupPids.map(({ groupPid }) => groupPid),
+        groupId: {
+          in: groupIds.map(({ groupId }) => groupId),
         },
       },
-      select: { functionPid: true },
+      select: { functionId: true },
     });
     const functions = await prisma.function.findMany({
       where: {
-        pid: { in: functionPids.map(({ functionPid }) => functionPid) },
+        id: { in: functionIds.map(({ functionId }) => functionId) },
       },
       select: { code: true, name: true },
     });
     const adminGroup = await prisma.group.findMany({
       where: {
-        pid: { in: groupPids.map(({ groupPid }) => groupPid) },
+        id: { in: groupIds.map(({ groupId }) => groupId) },
         code: this.ADMIN_GROUP_CODE,
       },
     });

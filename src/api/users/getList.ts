@@ -25,7 +25,7 @@ const response = z
   .object({
     list: z
       .object({
-        id: z.string().uuid(),
+        id: z.string().cuid2(),
         name: z.string(),
         createdAt: z.date(),
         updatedAt: z.date(),

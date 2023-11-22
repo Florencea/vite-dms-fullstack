@@ -6,7 +6,7 @@ const parameters = makeParameters([
   {
     name: "id",
     type: "Path",
-    schema: z.string(),
+    schema: z.string().cuid2(),
   },
 ]);
 

@@ -9,11 +9,12 @@
     "start": "dotenv -v NODE_ENV=production node dist/server/app.js",
     "lint": "eslint --ext js,mjs.cjs,jsx,ts,tsx . && tsc",
     "format": "prettier '**/*' --write --ignore-unknown --cache",
-    "db:dev:init": "prisma db push && prisma migrate dev --name init",
+    "db:dev:init": "prisma migrate dev --name init",
     "db:dev:studio": "prisma studio",
     "db:prod:migrate": "prisma migrate deploy"
   },
   "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
     "@prisma/client": "^5.6.0",
     "@zodios/core": "^10.9.6",
     "@zodios/express": "^10.6.1",

@@ -108,18 +108,18 @@ async function main() {
   });
   await prisma.userGroup.upsert({
     where: {
-      userPid_groupPid: {
-        userPid: defaultUser.pid,
-        groupPid: defaultGroup.pid,
+      userId_groupId: {
+        userId: defaultUser.id,
+        groupId: defaultGroup.id,
       },
     },
     create: {
-      userPid: defaultUser.pid,
-      groupPid: defaultGroup.pid,
+      userId: defaultUser.id,
+      groupId: defaultGroup.id,
     },
     update: {
-      userPid: defaultUser.pid,
-      groupPid: defaultGroup.pid,
+      userId: defaultUser.id,
+      groupId: defaultGroup.id,
     },
   });
   await Promise.all(
@@ -133,18 +133,18 @@ async function main() {
       });
       await prisma.groupFunction.upsert({
         where: {
-          groupPid_functionPid: {
-            groupPid: defaultGroup.pid,
-            functionPid: ff.pid,
+          groupId_functionId: {
+            groupId: defaultGroup.id,
+            functionId: ff.id,
           },
         },
         create: {
-          groupPid: defaultGroup.pid,
-          functionPid: ff.pid,
+          groupId: defaultGroup.id,
+          functionId: ff.id,
         },
         update: {
-          groupPid: defaultGroup.pid,
-          functionPid: ff.pid,
+          groupId: defaultGroup.id,
+          functionId: ff.id,
         },
       });
       await Promise.all(
@@ -161,13 +161,13 @@ async function main() {
               I18N_ZHTW_F000.map(async (i) => {
                 await prisma.i18n.upsert({
                   where: {
-                    code_localePid: {
+                    code_localeId: {
                       code: i.code,
-                      localePid: ll.pid,
+                      localeId: ll.id,
                     },
                   },
-                  create: { ...i, localePid: ll.pid, functionPid: ff.pid },
-                  update: { ...i, localePid: ll.pid, functionPid: ff.pid },
+                  create: { ...i, localeId: ll.id, functionId: ff.id },
+                  update: { ...i, localeId: ll.id, functionId: ff.id },
                 });
               }),
             );
@@ -177,13 +177,13 @@ async function main() {
               I18N_ENUS_F000.map(async (i) => {
                 await prisma.i18n.upsert({
                   where: {
-                    code_localePid: {
+                    code_localeId: {
                       code: i.code,
-                      localePid: ll.pid,
+                      localeId: ll.id,
                     },
                   },
-                  create: { ...i, localePid: ll.pid, functionPid: ff.pid },
-                  update: { ...i, localePid: ll.pid, functionPid: ff.pid },
+                  create: { ...i, localeId: ll.id, functionId: ff.id },
+                  update: { ...i, localeId: ll.id, functionId: ff.id },
                 });
               }),
             );

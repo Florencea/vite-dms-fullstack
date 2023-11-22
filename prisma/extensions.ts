@@ -1,73 +1,31 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { createId } from "@paralleldrive/cuid2";
+import { Prisma } from "@prisma/client";
 import argon2 from "argon2";
 
-const prisma = new PrismaClient();
-
-export const softDeleteExtesion = () => {
+export const cuid2Extension = () => {
   return Prisma.defineExtension({
-    name: "soft-delete",
+    name: "cuid2",
     query: {
       $allModels: {
-        aggregate: async ({ args, query }) => {
-          args.where = { deletedAt: null, ...args.where };
+        create: async ({ args, query }) => {
+          const id = createId();
+          args.data = { ...args.data, id };
           return query(args);
         },
-        count: async ({ args, query }) => {
-          args.where = { deletedAt: null, ...args.where };
+        upsert: async ({ args, query }) => {
+          const id = createId();
+          args.create = {
+            ...args.create,
+            id,
+          };
           return query(args);
-        },
-        findFirstOrThrow: async ({ args, query }) => {
-          args.where = { deletedAt: null, ...args.where };
-          return query(args);
-        },
-        findUniqueOrThrow: async ({ args, query }) => {
-          args.where = { deletedAt: null, ...args.where };
-          return query(args);
-        },
-        findUnique: async ({ args, query }) => {
-          args.where = { deletedAt: null, ...args.where };
-          return query(args);
-        },
-        findFirst: async ({ args, query }) => {
-          args.where = { deletedAt: null, ...args.where };
-          return query(args);
-        },
-        findMany: async ({ args, query }) => {
-          args.where = { deletedAt: null, ...args.where };
-          return query(args);
-        },
-        groupBy: async ({ args, query }) => {
-          args.where = { deletedAt: null, ...args.where };
-          return query(args);
-        },
-        delete: async ({ args, model }) => {
-          const modelLowerCase = model.toLowerCase() as Uncapitalize<
-            typeof model
-          >;
-          // @ts-expect-error: Requires more types from Prisma
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-          return await prisma[modelLowerCase].update({
-            ...args,
-            data: { deletedAt: new Date() },
-          });
-        },
-        deleteMany: async ({ args, model }) => {
-          const modelLowerCase = model.toLowerCase() as Uncapitalize<
-            typeof model
-          >;
-          // @ts-expect-error: Requires more types from Prisma
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-          return await prisma[modelLowerCase].updateMany({
-            ...args,
-            data: { deletedAt: new Date() },
-          });
         },
       },
     },
   });
 };
 
-export const userCreateExtesion = () => {
+export const userCreateExtension = () => {
   return Prisma.defineExtension({
     name: "user-create",
     query: {

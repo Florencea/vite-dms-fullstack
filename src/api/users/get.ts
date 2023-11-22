@@ -6,14 +6,14 @@ const parameters = makeParameters([
   {
     name: "id",
     type: "Path",
-    schema: z.string(),
+    schema: z.string().cuid2(),
   },
 ]);
 
 const status = 200;
 const response = z
   .object({
-    id: z.string().uuid(),
+    id: z.string().cuid2(),
     account: z.string(),
     email: z.string().email(),
     name: z.string(),
