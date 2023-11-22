@@ -1,16 +1,18 @@
 import { makeEndpoint } from "@zodios/core";
 import { z } from "zod";
-import { errors, makeZResponse } from "../util";
+import { errors } from "../util";
 
-const response = makeZResponse({
-  data: z.object({}),
-});
+const status = 204;
+const response = z.object({});
+const responseDescription = "No Content";
 
 const logout = makeEndpoint({
   method: "delete",
   path: "/auth",
   description: "Logout system",
+  status,
   response,
+  responseDescription,
   errors,
 });
 

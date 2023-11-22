@@ -1,13 +1,13 @@
 import { makeErrors } from "@zodios/core";
 import type { NextFunction, Request, Response } from "express";
-import { z, type ZodIssue, type ZodObject, type ZodTypeAny } from "zod";
+import { z, type ZodIssue } from "zod";
 
 interface ZErrorT {
   name: string;
   message: string;
   zError: {
     statusCode: number;
-    body: { message: string; timestamp: Date; data: Record<string, unknown> };
+    body: { message: string };
   };
 }
 
@@ -16,7 +16,7 @@ class ZError extends Error {
   message: string;
   zError: {
     statusCode: number;
-    body: { message: string; timestamp: Date; data: Record<string, unknown> };
+    body: { message: string };
   };
   constructor({ name, message, zError }: ZErrorT) {
     super(message);
@@ -25,19 +25,6 @@ class ZError extends Error {
     this.zError = zError;
   }
 }
-
-export const makeZResponse = <T extends Record<string, ZodTypeAny>>(params: {
-  data: ZodObject<T>;
-}) => {
-  const { data } = params;
-  return z
-    .object({
-      message: z.string(),
-      timestamp: z.date(),
-      data,
-    })
-    .required();
-};
 
 export const throwError = (params: { statusCode: number; message: string }) => {
   const { statusCode, message } = params;
@@ -48,22 +35,9 @@ export const throwError = (params: { statusCode: number; message: string }) => {
       statusCode,
       body: {
         message,
-        timestamp: new Date(),
-        data: {},
       },
     },
   });
-};
-
-export const makeSuccessResponse = <T extends object>(
-  data: T,
-  message?: string,
-) => {
-  return {
-    message: message ?? "ok",
-    timestamp: new Date(),
-    data,
-  } satisfies z.infer<ReturnType<typeof makeZResponse>>;
 };
 
 export const makeErrorResponse = (err: unknown) => {
@@ -78,8 +52,6 @@ export const makeErrorResponse = (err: unknown) => {
       statusCode,
       body: {
         message,
-        timestamp: new Date(),
-        data: {},
       },
     };
   } else {
@@ -87,7 +59,6 @@ export const makeErrorResponse = (err: unknown) => {
       statusCode: 500,
       body: {
         message: "Server error",
-        timestamp: new Date(),
         data: {},
       },
     };
@@ -124,8 +95,6 @@ export const errors = makeErrors([
     schema: z
       .object({
         message: z.string(),
-        timestamp: z.date(),
-        data: z.object({}).default({}),
       })
       .required(),
   },

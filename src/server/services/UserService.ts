@@ -1,11 +1,10 @@
 import { prisma } from "../../../prisma";
-import type { ReqUsersCreateT, ResUsersCreateT } from "../../api/users/create";
-import type { ResUsersGetT } from "../../api/users/get";
+import type { ReqUsersCreateT } from "../../api/users/create";
 import type {
   ReqUsersGetListT,
   ResUsersGetListT,
 } from "../../api/users/getList";
-import type { ReqUsersUpdateT, ResUsersUpdateT } from "../../api/users/update";
+import type { ReqUsersUpdateT } from "../../api/users/update";
 import { throwError } from "../../api/util";
 
 export class UserService {
@@ -25,7 +24,7 @@ export class UserService {
     return { list, total };
   }
 
-  public async get(id: string): Promise<ResUsersGetT | null> {
+  public async get(id: string) {
     const user = await prisma.user.findUnique({
       where: { id },
       select: {
@@ -39,12 +38,14 @@ export class UserService {
         updatedAt: true,
       },
     });
-    return user;
+    if (!user) {
+      throwError({ statusCode: 404, message: "User not found" });
+    } else {
+      return user;
+    }
   }
 
-  public async create(
-    data: ReqUsersCreateT,
-  ): Promise<ResUsersCreateT | undefined> {
+  public async create(data: ReqUsersCreateT) {
     const { account, password, email, name, phone, website } = data;
     const oldUser = await prisma.user.findFirst({
       where: {
@@ -64,7 +65,7 @@ export class UserService {
         });
       }
     } else {
-      const user = await prisma.user.create({
+      await prisma.user.create({
         data: { account, password, email, name, phone, website },
         select: {
           id: true,
@@ -77,34 +78,19 @@ export class UserService {
           updatedAt: true,
         },
       });
-      return user;
     }
   }
 
-  public async update(
-    id: string,
-    data: ReqUsersUpdateT,
-  ): Promise<ResUsersUpdateT | undefined> {
+  public async update(id: string, data: ReqUsersUpdateT) {
     const { email, name, phone, website } = data;
     const oldUser = await this.get(id);
     if (!oldUser) {
       throwError({ statusCode: 404, message: "User not found" });
     } else {
-      const user = await prisma.user.update({
+      await prisma.user.update({
         where: { id },
         data: { email, name, phone, website },
-        select: {
-          id: true,
-          account: true,
-          email: true,
-          name: true,
-          phone: true,
-          website: true,
-          createdAt: true,
-          updatedAt: true,
-        },
       });
-      return user;
     }
   }
 

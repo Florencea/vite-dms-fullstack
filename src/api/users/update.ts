@@ -1,6 +1,6 @@
 import { makeEndpoint, makeParameters } from "@zodios/core";
 import { z } from "zod";
-import { errors, makeZResponse } from "../util";
+import { errors } from "../util";
 
 const parameters = makeParameters([
   {
@@ -24,29 +24,18 @@ const parameters = makeParameters([
 
 export type ReqUsersUpdateT = z.infer<(typeof parameters)["1"]["schema"]>;
 
-const response = makeZResponse({
-  data: z
-    .object({
-      id: z.string().uuid(),
-      account: z.string(),
-      email: z.string().email(),
-      name: z.string(),
-      phone: z.string().nullable(),
-      website: z.string().nullable(),
-      createdAt: z.date().nullable(),
-      updatedAt: z.date(),
-    })
-    .required(),
-});
-
-export type ResUsersUpdateT = z.infer<typeof response>["data"];
+const status = 204;
+const response = z.object({});
+const responseDescription = "No Content";
 
 const update = makeEndpoint({
   method: "put",
   path: "/users/:id",
   description: "Update user",
   parameters,
+  status,
   response,
+  responseDescription,
   errors,
 });
 

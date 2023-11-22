@@ -1,10 +1,6 @@
 import { zodiosContext } from "@zodios/express";
 import usersApi from "../../api/users";
-import {
-  makeSuccessResponse,
-  throwError,
-  validationErrorHandler,
-} from "../../api/util";
+import { validationErrorHandler } from "../../api/util";
 import { AuthService } from "../services/AuthService";
 import { UserService } from "../services/UserService";
 
@@ -17,12 +13,8 @@ usersController.post("/users", (req, res, next) => {
   const handler = async () => {
     try {
       const userService = new UserService();
-      const data = await userService.create(req.body);
-      if (data) {
-        res.json(makeSuccessResponse(data));
-      } else {
-        throwError({ statusCode: 500, message: "Server Error" });
-      }
+      await userService.create(req.body);
+      res.status(201).json({});
     } catch (err) {
       next(err);
     }
@@ -36,7 +28,7 @@ usersController.get("/users", (req, res, next) => {
     try {
       const userService = new UserService();
       const data = await userService.getList(req.query);
-      res.json(makeSuccessResponse(data));
+      res.json(data);
     } catch (err) {
       next(err);
     }
@@ -50,11 +42,7 @@ usersController.get("/users/:id", (req, res, next) => {
     try {
       const userService = new UserService();
       const data = await userService.get(req.params.id);
-      if (data) {
-        res.json(makeSuccessResponse(data));
-      } else {
-        throwError({ statusCode: 404, message: "User not found" });
-      }
+      res.json(data);
     } catch (err) {
       next(err);
     }
@@ -67,12 +55,8 @@ usersController.put("/users/:id", (req, res, next) => {
   const handler = async () => {
     try {
       const userServvice = new UserService();
-      const data = await userServvice.update(req.params.id, req.body);
-      if (data) {
-        res.json(makeSuccessResponse(data));
-      } else {
-        throwError({ statusCode: 404, message: "User not found" });
-      }
+      await userServvice.update(req.params.id, req.body);
+      res.status(204).json({});
     } catch (err) {
       next(err);
     }
@@ -86,7 +70,7 @@ usersController.delete("/users/:id", (req, res, next) => {
     try {
       const userService = new UserService();
       await userService.remove(req.params.id);
-      res.json(makeSuccessResponse({}));
+      res.status(204).json({});
     } catch (err) {
       next(err);
     }

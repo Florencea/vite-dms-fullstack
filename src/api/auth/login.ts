@@ -1,6 +1,6 @@
 import { makeEndpoint, makeParameters } from "@zodios/core";
 import { z } from "zod";
-import { errors, makeZResponse } from "../util";
+import { errors } from "../util";
 
 const SECURITY_SCHEME = process.env.VITE_API_SECURITY ?? "cookie";
 
@@ -19,18 +19,16 @@ const parameters = makeParameters([
 
 export type ReqAuthLoginT = z.infer<(typeof parameters)["0"]["schema"]>;
 
+const status = SECURITY_SCHEME === "jwt" ? 200 : 204;
 const response =
   SECURITY_SCHEME === "jwt"
-    ? makeZResponse({
-        data: z
-          .object({
-            token: z.string(),
-          })
-          .required(),
-      })
-    : makeZResponse({
-        data: z.object({}),
-      });
+    ? z
+        .object({
+          token: z.string(),
+        })
+        .required()
+    : z.object({});
+const responseDescription = SECURITY_SCHEME === "jwt" ? "OK" : "No Content";
 
 interface ResAuthLoginJwtT {
   token: string;
@@ -43,7 +41,9 @@ const login = makeEndpoint({
   path: "/auth",
   description: "Login to system",
   parameters,
+  status,
   response,
+  responseDescription,
   errors,
 });
 

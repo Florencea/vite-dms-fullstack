@@ -1,6 +1,6 @@
 import { makeEndpoint, makeParameters } from "@zodios/core";
 import { z } from "zod";
-import { errors, makeZResponse } from "../util";
+import { errors } from "../util";
 
 const parameters = makeParameters([
   {
@@ -10,16 +10,18 @@ const parameters = makeParameters([
   },
 ]);
 
-const response = makeZResponse({
-  data: z.object({}),
-});
+const status = 204;
+const response = z.object({});
+const responseDescription = "No Content";
 
 const remove = makeEndpoint({
   method: "delete",
   path: "/users/:id",
   description: "Remove user",
   parameters,
+  status,
   response,
+  responseDescription,
   errors,
 });
 

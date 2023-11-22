@@ -3,7 +3,7 @@ import argon2 from "argon2";
 import type express from "express";
 import * as jose from "jose";
 import { prisma } from "../../../prisma";
-import type { ReqAuthLoginT, ResAuthLoginT } from "../../api/auth/login";
+import type { ReqAuthLoginT } from "../../api/auth/login";
 import { throwError } from "../../api/util";
 import { DOC_SECURITY_SCHEME, JWT_SETTINGS } from "../config";
 
@@ -46,9 +46,7 @@ export class AuthService {
     }
   }
 
-  public async login(
-    params: ReqAuthLoginT,
-  ): Promise<ResAuthLoginT | undefined> {
+  public async login(params: ReqAuthLoginT) {
     const { account, password } = params;
     const user = await prisma.user.findUnique({ where: { account } });
     if (!user) {

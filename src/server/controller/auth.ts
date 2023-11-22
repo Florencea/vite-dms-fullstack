@@ -1,10 +1,6 @@
 import { zodiosContext } from "@zodios/express";
 import authApi from "../../api/auth";
-import {
-  makeSuccessResponse,
-  throwError,
-  validationErrorHandler,
-} from "../../api/util";
+import { throwError, validationErrorHandler } from "../../api/util";
 import { DOC_SECURITY_SCHEME, JWT_SETTINGS } from "../config";
 import { AuthService } from "../services/AuthService";
 
@@ -20,14 +16,14 @@ authController.post("/auth", (req, res, next) => {
       if (data) {
         const [SECURITY_SCHEME] = DOC_SECURITY_SCHEME;
         if (SECURITY_SCHEME === "jwt") {
-          res.json(makeSuccessResponse(data));
+          res.json(data);
         } else {
           const { maxAge } = JWT_SETTINGS;
           res
             .setHeader("Set-Cookie", [
               `${SECURITY_SCHEME}=${data.token}; HttpOnly; Path=/; Max-Age=${maxAge}; Secure=True;`,
             ])
-            .json(makeSuccessResponse({}));
+            .json({});
         }
       } else {
         throwError({ statusCode: 500, message: "Server Error" });
@@ -43,13 +39,14 @@ authController.delete("/auth", (_, res, next) => {
   try {
     const [SECURITY_SCHEME] = DOC_SECURITY_SCHEME;
     if (SECURITY_SCHEME === "jwt") {
-      res.json(makeSuccessResponse({}));
+      res.status(204).json({});
     } else {
       res
+        .status(204)
         .setHeader("Set-Cookie", [
           `${SECURITY_SCHEME}=deleted; HttpOnly; Path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;`,
         ])
-        .json(makeSuccessResponse({}));
+        .json({});
     }
   } catch (err) {
     next(err);
