@@ -17,7 +17,7 @@ export class I18nService {
   }
 
   public getSystemMessage(code: string) {
-    return this.systemMessages[code] ?? "";
+    return this.systemMessages[code] ?? `${code}`;
   }
 
   public async getList(

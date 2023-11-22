@@ -14,7 +14,7 @@ export const i18nControllerProtected = ctx.router(i18nApiProtected, {
   validationErrorHandler: void validationErrorHandler,
 });
 
-i18nControllerPublic.get("/i18n/locales", (req, res, next) => {
+i18nControllerPublic.get("/i18n/locales", (_, res, next) => {
   const handler = async () => {
     try {
       const i18nService = new I18nService();

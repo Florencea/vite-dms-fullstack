@@ -84,16 +84,6 @@ export class UserService {
     } else {
       await prisma.user.create({
         data: { account, password, email, name, phone, website },
-        select: {
-          id: true,
-          account: true,
-          email: true,
-          name: true,
-          phone: true,
-          website: true,
-          createdAt: true,
-          updatedAt: true,
-        },
       });
     }
   }
