@@ -35,7 +35,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@ant-design/cssinjs": "^1.17.3",
+    "@ant-design/cssinjs": "^1.17.4",
     "@ant-design/icons": "^5.2.6",
     "@generouted/react-router": "^1.16.1",
     "@types/compression": "^1.7.5",
