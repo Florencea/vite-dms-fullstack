@@ -15,7 +15,7 @@ const parameters = makeParameters([
   },
 ]);
 
-export interface ReqUserGetListT {
+export interface ReqUsersGetListT {
   current: number;
   pageSize: number;
 }
@@ -36,11 +36,11 @@ const response = makeZResponse({
     .required(),
 });
 
-export type ResUserGetListT = z.infer<typeof response>["data"];
+export type ResUsersGetListT = z.infer<typeof response>["data"];
 
 const getList = makeEndpoint({
   method: "get",
-  path: "/user",
+  path: "/users",
   description: "Get user list",
   parameters,
   response,

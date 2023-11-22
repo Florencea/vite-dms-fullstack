@@ -1,12 +1,15 @@
 import { prisma } from "../../../prisma";
-import type { ReqUserCreateT, ResUserCreateT } from "../../api/user/create";
-import type { ResUserGetT } from "../../api/user/get";
-import type { ReqUserGetListT, ResUserGetListT } from "../../api/user/getList";
-import type { ReqUserUpdateT, ResUserUpdateT } from "../../api/user/update";
+import type { ReqUsersCreateT, ResUsersCreateT } from "../../api/users/create";
+import type { ResUsersGetT } from "../../api/users/get";
+import type {
+  ReqUsersGetListT,
+  ResUsersGetListT,
+} from "../../api/users/getList";
+import type { ReqUsersUpdateT, ResUsersUpdateT } from "../../api/users/update";
 import { throwError } from "../../api/util";
 
 export class UserService {
-  public async getList(params: ReqUserGetListT): Promise<ResUserGetListT> {
+  public async getList(params: ReqUsersGetListT): Promise<ResUsersGetListT> {
     const { current, pageSize } = params;
     const total = await prisma.user.count();
     const list = await prisma.user.findMany({
@@ -22,7 +25,7 @@ export class UserService {
     return { list, total };
   }
 
-  public async get(id: string): Promise<ResUserGetT | null> {
+  public async get(id: string): Promise<ResUsersGetT | null> {
     const user = await prisma.user.findUnique({
       where: { id },
       select: {
@@ -40,8 +43,8 @@ export class UserService {
   }
 
   public async create(
-    data: ReqUserCreateT,
-  ): Promise<ResUserCreateT | undefined> {
+    data: ReqUsersCreateT,
+  ): Promise<ResUsersCreateT | undefined> {
     const { account, password, email, name, phone, website } = data;
     const oldUser = await prisma.user.findFirst({
       where: {
@@ -80,8 +83,8 @@ export class UserService {
 
   public async update(
     id: string,
-    data: ReqUserUpdateT,
-  ): Promise<ResUserUpdateT | undefined> {
+    data: ReqUsersUpdateT,
+  ): Promise<ResUsersUpdateT | undefined> {
     const { email, name, phone, website } = data;
     const oldUser = await this.get(id);
     if (!oldUser) {

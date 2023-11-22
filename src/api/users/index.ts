@@ -5,6 +5,6 @@ import getList from "./getList";
 import remove from "./remove";
 import update from "./update";
 
-const userApi = makeApi([getList, create, get, update, remove]);
+const usersApi = makeApi([getList, create, get, update, remove]);
 
-export default userApi;
+export default usersApi;

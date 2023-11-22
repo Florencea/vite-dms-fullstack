@@ -4,25 +4,22 @@ import { errors, makeZResponse } from "../util";
 
 const parameters = makeParameters([
   {
-    name: "id",
-    type: "Path",
-    schema: z.string(),
-  },
-  {
     name: "data",
     type: "Body",
     schema: z
       .object({
+        account: z.string(),
+        password: z.string(),
         email: z.string().email(),
         name: z.string(),
-        phone: z.string(),
-        website: z.string(),
+        phone: z.string().nullable(),
+        website: z.string().nullable(),
       })
-      .partial(),
+      .required(),
   },
 ]);
 
-export type ReqUserUpdateT = z.infer<(typeof parameters)["1"]["schema"]>;
+export type ReqUsersCreateT = z.infer<(typeof parameters)["0"]["schema"]>;
 
 const response = makeZResponse({
   data: z
@@ -39,15 +36,15 @@ const response = makeZResponse({
     .required(),
 });
 
-export type ResUserUpdateT = z.infer<typeof response>["data"];
+export type ResUsersCreateT = z.infer<typeof response>["data"];
 
-const update = makeEndpoint({
-  method: "patch",
-  path: "/user/:id",
-  description: "Update user",
+const create = makeEndpoint({
+  method: "post",
+  path: "/users",
+  description: "Create user",
   parameters,
   response,
   errors,
 });
 
-export default update;
+export default create;

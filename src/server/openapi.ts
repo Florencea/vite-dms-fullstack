@@ -2,7 +2,7 @@ import { openApiBuilder } from "@zodios/openapi";
 import { join } from "node:path";
 import type { SwaggerUiOptions } from "swagger-ui-express";
 import authApi from "../api/auth";
-import userApi from "../api/user";
+import usersApi from "../api/users";
 import {
   API_PREFIX,
   BASE,
@@ -13,6 +13,8 @@ import {
   DOC_VERSION,
   FAVICON,
 } from "./config";
+
+const [security] = DOC_SECURITY_SCHEME;
 
 export const openApiDocument = openApiBuilder({
   title: DOC_TITLE,
@@ -31,7 +33,7 @@ export const openApiDocument = openApiBuilder({
   /**
    * protected api below
    */
-  .addProtectedApi(DOC_SECURITY_SCHEME[0], userApi)
+  .addProtectedApi(security, usersApi)
   .build();
 
 export const SWAGGER_UI_OPTIONS: SwaggerUiOptions = {

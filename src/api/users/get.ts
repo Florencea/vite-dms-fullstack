@@ -4,22 +4,11 @@ import { errors, makeZResponse } from "../util";
 
 const parameters = makeParameters([
   {
-    name: "data",
-    type: "Body",
-    schema: z
-      .object({
-        account: z.string(),
-        password: z.string(),
-        email: z.string().email(),
-        name: z.string(),
-        phone: z.string().nullable(),
-        website: z.string().nullable(),
-      })
-      .required(),
+    name: "id",
+    type: "Path",
+    schema: z.string(),
   },
 ]);
-
-export type ReqUserCreateT = z.infer<(typeof parameters)["0"]["schema"]>;
 
 const response = makeZResponse({
   data: z
@@ -36,15 +25,15 @@ const response = makeZResponse({
     .required(),
 });
 
-export type ResUserCreateT = z.infer<typeof response>["data"];
+export type ResUsersGetT = z.infer<typeof response>["data"];
 
-const create = makeEndpoint({
-  method: "post",
-  path: "/user",
-  description: "Create user",
+const get = makeEndpoint({
+  method: "get",
+  path: "/users/:id",
+  description: "Get user",
   parameters,
   response,
   errors,
 });
 
-export default create;
+export default get;

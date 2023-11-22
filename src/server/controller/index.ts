@@ -1,5 +1,5 @@
 import authController from "./auth";
-import userController from "./user";
+import usersController from "./users";
 
 export const publicControllers = [authController];
-export const protectedControllers = [userController];
+export const protectedControllers = [usersController];

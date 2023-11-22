@@ -1,5 +1,5 @@
 import { zodiosContext } from "@zodios/express";
-import userApi from "../../api/user";
+import usersApi from "../../api/users";
 import {
   makeSuccessResponse,
   throwError,
@@ -10,9 +10,9 @@ import { UserService } from "../services/UserService";
 
 const ctx = zodiosContext();
 
-const userController = ctx.router(userApi, { validationErrorHandler });
+const usersController = ctx.router(usersApi, { validationErrorHandler });
 
-userController.post("/user", (req, res, next) => {
+usersController.post("/users", (req, res, next) => {
   new AuthService(["USER_CREATE"], req.headers.authorization);
   const handler = async () => {
     try {
@@ -30,7 +30,7 @@ userController.post("/user", (req, res, next) => {
   void handler();
 });
 
-userController.get("/user", (req, res, next) => {
+usersController.get("/users", (req, res, next) => {
   new AuthService(["USER_READ_LIST"], req.headers.authorization);
   const handler = async () => {
     try {
@@ -44,7 +44,7 @@ userController.get("/user", (req, res, next) => {
   void handler();
 });
 
-userController.get("/user/:id", (req, res, next) => {
+usersController.get("/users/:id", (req, res, next) => {
   new AuthService(["USER_READ"], req.headers.authorization);
   const handler = async () => {
     try {
@@ -62,7 +62,7 @@ userController.get("/user/:id", (req, res, next) => {
   void handler();
 });
 
-userController.patch("/user/:id", (req, res, next) => {
+usersController.patch("/users/:id", (req, res, next) => {
   new AuthService(["USER_UPDATE"], req.headers.authorization);
   const handler = async () => {
     try {
@@ -80,7 +80,7 @@ userController.patch("/user/:id", (req, res, next) => {
   void handler();
 });
 
-userController.delete("/user/:id", (req, res, next) => {
+usersController.delete("/users/:id", (req, res, next) => {
   new AuthService(["USER_DELETE"], req.headers.authorization);
   const handler = async () => {
     try {
@@ -94,4 +94,4 @@ userController.delete("/user/:id", (req, res, next) => {
   void handler();
 });
 
-export default userController;
+export default usersController;

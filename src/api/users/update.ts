@@ -8,7 +8,21 @@ const parameters = makeParameters([
     type: "Path",
     schema: z.string(),
   },
+  {
+    name: "data",
+    type: "Body",
+    schema: z
+      .object({
+        email: z.string().email(),
+        name: z.string(),
+        phone: z.string(),
+        website: z.string(),
+      })
+      .partial(),
+  },
 ]);
+
+export type ReqUsersUpdateT = z.infer<(typeof parameters)["1"]["schema"]>;
 
 const response = makeZResponse({
   data: z
@@ -25,15 +39,15 @@ const response = makeZResponse({
     .required(),
 });
 
-export type ResUserGetT = z.infer<typeof response>["data"];
+export type ResUsersUpdateT = z.infer<typeof response>["data"];
 
-const get = makeEndpoint({
-  method: "get",
-  path: "/user/:id",
-  description: "Get user",
+const update = makeEndpoint({
+  method: "patch",
+  path: "/users/:id",
+  description: "Update user",
   parameters,
   response,
   errors,
 });
 
-export default get;
+export default update;

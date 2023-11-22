@@ -16,7 +16,7 @@ const response = makeZResponse({
 
 const remove = makeEndpoint({
   method: "delete",
-  path: "/user/:id",
+  path: "/users/:id",
   description: "Remove user",
   parameters,
   response,
