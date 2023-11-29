@@ -7,7 +7,7 @@
     "dev": "dotenv nodemon src/server/app.ts",
     "build": "dotenv vite build",
     "start": "dotenv -v NODE_ENV=production node dist/server/app.js",
-    "lint": "eslint --ext js,mjs.cjs,jsx,ts,tsx . && tsc",
+    "lint": "eslint --ext ts,tsx . && tsc",
     "format": "prettier '**/*' --write --ignore-unknown --cache",
     "db:dev:init": "prisma migrate dev --name init",
     "db:dev:studio": "prisma studio",
@@ -51,14 +51,13 @@
     "@types/swagger-ui-express": "^4.1.6",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
     "@typescript-eslint/parser": "^6.13.1",
-    "@vitejs/plugin-react-swc": "^3.5.0",
+    "@vitejs/plugin-react": "^4.2.0",
     "antd": "^5.11.5",
     "autoprefixer": "^10.4.16",
     "eslint": "^8.54.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.4",
     "nodemon": "^3.0.1",
     "postcss": "^8.4.31",
     "prettier": "^3.1.0",
@@ -73,7 +72,7 @@
     "tailwindcss": "^3.3.5",
     "tsx": "^4.6.0",
     "typescript": "^5.3.2",
-    "vite": "^5.0.3"
+    "vite": "^5.0.4"
   },
   "prisma": {
     "seed": "dotenv tsx prisma/seed.ts"
