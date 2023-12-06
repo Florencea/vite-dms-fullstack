@@ -71,7 +71,7 @@
     "tailwindcss": "^3.3.6",
     "tsx": "^4.6.2",
     "typescript": "^5.3.2",
-    "vite": "^5.0.5"
+    "vite": "^5.0.6"
   },
   "prisma": {
     "seed": "dotenv tsx prisma/seed.ts"
