@@ -39,7 +39,7 @@
   "devDependencies": {
     "@ant-design/cssinjs": "^1.18.1",
     "@ant-design/icons": "^5.2.6",
-    "@generouted/react-router": "^1.16.1",
+    "@generouted/react-router": "^1.17.0",
     "@types/accept-language-parser": "^1.5.6",
     "@types/compression": "^1.7.5",
     "@types/cookie-parser": "^1.4.6",
