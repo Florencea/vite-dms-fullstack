@@ -52,7 +52,7 @@
     "@typescript-eslint/eslint-plugin": "^6.17.0",
     "@typescript-eslint/parser": "^6.17.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "antd": "^5.12.6",
+    "antd": "^5.12.7",
     "autoprefixer": "^10.4.16",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
